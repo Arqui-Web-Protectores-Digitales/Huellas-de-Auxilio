@@ -1,0 +1,24 @@
+package com.upc.huellasdeauxilio.controladores;
+
+import com.upc.huellasdeauxilio.entidades.Ciudadano;
+import com.upc.huellasdeauxilio.servicios.CiudadanoServicio;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api")
+public class CiudadanoControlador {
+
+    @Autowired
+    private CiudadanoServicio ciudadanoServicio;
+
+    @PostMapping("/ciudadano")
+    public Ciudadano insertar(@RequestBody Ciudadano ciudadano) {
+        return ciudadanoServicio.insertar(ciudadano);
+    }
+
+    @GetMapping("/ciudadano/dni/{dni}")
+    public Ciudadano buscarPorDni(@PathVariable String dni) {
+        return ciudadanoServicio.buscarPorDni(dni);
+    }
+}
