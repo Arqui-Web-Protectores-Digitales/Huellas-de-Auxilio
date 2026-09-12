@@ -6,4 +6,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EntidadRepositorio extends JpaRepository<Entidad, Long> {
+
+    Entidad findByUsuario_IdUsuario(Long idUsuario);
+
+    Entidad findByZonaAtencion(String zonaAtencion);
 }

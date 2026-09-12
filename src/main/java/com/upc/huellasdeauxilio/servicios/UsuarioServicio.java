@@ -18,4 +18,19 @@ public class UsuarioServicio {
     public Usuario buscarPorCorreo(String correo) {
         return usuarioRepositorio.findByCorreo(correo);
     }
+
+    public Usuario iniciarSesion(String correo, String contraseña) {
+        return usuarioRepositorio.findByCorreoAndContraseña(correo, contraseña);
+    }
+
+    public Usuario cambiarContrasena(String correo, String nuevaContrasena) {
+        Usuario usuario = usuarioRepositorio.findByCorreo(correo);
+
+        if (usuario != null) {
+            usuario.setContraseña(nuevaContrasena);
+            return usuarioRepositorio.save(usuario);
+        }
+
+        return null;
+    }
 }

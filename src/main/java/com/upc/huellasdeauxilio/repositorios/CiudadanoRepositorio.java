@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface CiudadanoRepositorio extends JpaRepository<Ciudadano, Long> {
 
     Ciudadano findByDni(String dni);
+
+    Ciudadano findByUsuario_IdUsuario(Long idUsuario);
 }

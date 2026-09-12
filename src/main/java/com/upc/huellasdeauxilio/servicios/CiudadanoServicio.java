@@ -18,4 +18,8 @@ public class CiudadanoServicio {
     public Ciudadano buscarPorDni(String dni) {
         return ciudadanoRepositorio.findByDni(dni);
     }
+
+    public Ciudadano buscarPorUsuario(Long idUsuario) {
+        return ciudadanoRepositorio.findByUsuario_IdUsuario(idUsuario);
+    }
 }

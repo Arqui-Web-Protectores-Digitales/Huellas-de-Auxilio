@@ -16,4 +16,14 @@ public class EntidadControlador {
     public Entidad insertar(@RequestBody Entidad entidad) {
         return entidadServicio.insertar(entidad);
     }
+
+    @GetMapping("/entidad/usuario/{idUsuario}")
+    public Entidad buscarPorUsuario(@PathVariable Long idUsuario) {
+        return entidadServicio.buscarPorUsuario(idUsuario);
+    }
+
+    @GetMapping("/entidad/zona/{zonaAtencion}")
+    public Entidad buscarPorZonaAtencion(@PathVariable String zonaAtencion) {
+        return entidadServicio.buscarPorZonaAtencion(zonaAtencion);
+    }
 }

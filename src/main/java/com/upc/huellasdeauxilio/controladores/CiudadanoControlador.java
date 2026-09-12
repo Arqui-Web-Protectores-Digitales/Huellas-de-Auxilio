@@ -21,4 +21,9 @@ public class CiudadanoControlador {
     public Ciudadano buscarPorDni(@PathVariable String dni) {
         return ciudadanoServicio.buscarPorDni(dni);
     }
+
+    @GetMapping("/ciudadano/usuario/{idUsuario}")
+    public Ciudadano buscarPorUsuario(@PathVariable Long idUsuario) {
+        return ciudadanoServicio.buscarPorUsuario(idUsuario);
+    }
 }

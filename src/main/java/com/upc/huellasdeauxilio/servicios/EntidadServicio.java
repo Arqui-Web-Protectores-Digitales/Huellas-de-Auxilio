@@ -14,4 +14,12 @@ public class EntidadServicio {
     public Entidad insertar(Entidad entidad) {
         return entidadRepositorio.save(entidad);
     }
+
+    public Entidad buscarPorUsuario(Long idUsuario) {
+        return entidadRepositorio.findByUsuario_IdUsuario(idUsuario);
+    }
+
+    public Entidad buscarPorZonaAtencion(String zonaAtencion) {
+        return entidadRepositorio.findByZonaAtencion(zonaAtencion);
+    }
 }

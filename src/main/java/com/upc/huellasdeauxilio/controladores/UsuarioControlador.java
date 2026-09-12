@@ -21,4 +21,19 @@ public class UsuarioControlador {
     public Usuario buscarPorCorreo(@PathVariable String correo) {
         return usuarioServicio.buscarPorCorreo(correo);
     }
+
+    @GetMapping("/usuario/login/{correo}/{contraseña}")
+    public Usuario iniciarSesion(@PathVariable String correo,
+                                 @PathVariable String contraseña) {
+        return usuarioServicio.iniciarSesion(correo, contraseña);
+    }
+
+    @PutMapping("/usuario/contrasena/{correo}")
+    public Usuario cambiarContrasena(@PathVariable String correo,
+                                     @RequestBody Usuario usuario) {
+        return usuarioServicio.cambiarContrasena(
+                correo,
+                usuario.getContraseña()
+        );
+    }
 }
