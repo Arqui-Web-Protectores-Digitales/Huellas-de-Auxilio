@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Ciudadano {
@@ -18,7 +18,6 @@ public class Ciudadano {
     private Long idCiudadano;
 
     private String dni;
-    private String alias;
     private String distrito;
     private String nombreCompleto;
 
