@@ -30,6 +30,7 @@ public class ReporteControlador {
         );
     }
 
+    // para ciudadano
     @GetMapping("/reportes/ciudadano/{idCiudadano}")
     public List<Reporte> listarPorCiudadano(@PathVariable Long idCiudadano) {
         return reporteServicio.listarPorCiudadano(idCiudadano);
@@ -54,4 +55,27 @@ public class ReporteControlador {
 
         return reporteServicio.filtrarReportes(idCiudadano, estado, urgencia, distrito);
     }
+
+    // para entidad
+    @GetMapping("/reportes/entidad/{idEntidad}")
+    public List<Reporte> listarPorEntidad(@PathVariable Long idEntidad) {
+        return reporteServicio.listarPorEntidad(idEntidad);
+    }
+
+    @GetMapping("/reportes/entidad/{idEntidad}/resumen")
+    public Map<String, Long> obtenerResumenEntidad(@PathVariable Long idEntidad) {
+        return reporteServicio.obtenerResumenEntidad(idEntidad);
+    }
+
+    @GetMapping("/reportes/entidad/{idEntidad}/filtro")
+    public List<Reporte> filtrarReportesEntidad(
+            @PathVariable Long idEntidad,
+            @RequestParam(required = false) String estado,
+            @RequestParam(required = false) String urgencia,
+            @RequestParam(required = false) String distrito) {
+
+        return reporteServicio.filtrarReportesEntidad(idEntidad, estado, urgencia, distrito);
+    }
+
+
 }
