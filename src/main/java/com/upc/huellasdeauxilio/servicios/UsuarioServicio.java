@@ -33,4 +33,35 @@ public class UsuarioServicio {
 
         return null;
     }
+
+    public Usuario cambiarContrasenaDesdePerfil(
+            String correo,
+            String contrasenaActual,
+            String nuevaContrasena,
+            String confirmarContrasena
+    ) {
+        if (correo == null || correo.isBlank()
+                || contrasenaActual == null || contrasenaActual.isBlank()
+                || nuevaContrasena == null || nuevaContrasena.isBlank()
+                || confirmarContrasena == null || confirmarContrasena.isBlank())
+        {
+            return null;
+        }
+
+        Usuario usuario = usuarioRepositorio.findByCorreo(correo);
+
+        if (usuario == null || usuario.getContraseña() == null) {
+            return null;
+        }
+
+        if (!usuario.getContraseña().equals(contrasenaActual)) {
+            return null;
+        }
+
+        if (!nuevaContrasena.equals(confirmarContrasena)) {
+            return null;
+        }
+
+        return cambiarContrasena(correo, nuevaContrasena);
+    }
 }
