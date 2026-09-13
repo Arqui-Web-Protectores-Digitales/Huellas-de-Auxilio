@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
-public class CiudadanoControlador {
+public class CiudadanoControlador
+{
 
     @Autowired
     private CiudadanoServicio ciudadanoServicio;
@@ -26,4 +27,19 @@ public class CiudadanoControlador {
     public Ciudadano buscarPorUsuario(@PathVariable Long idUsuario) {
         return ciudadanoServicio.buscarPorUsuario(idUsuario);
     }
+
+    @GetMapping("/ciudadano/perfil/{idCiudadano}")
+    public Ciudadano obtenerPerfil(@PathVariable Long idCiudadano)
+    {
+        return ciudadanoServicio.obtenerPerfil(idCiudadano);
+    }
+
+    @PutMapping("/ciudadano/perfil/{idCiudadano}")
+    public String actualizarPerfil(@PathVariable Long idCiudadano, @RequestBody Ciudadano ciudadano)
+    {
+        Ciudadano actualizado = ciudadanoServicio.actualizarPerfil(idCiudadano, ciudadano);
+
+        return "Perfil actualizado correctamente";
+    }
 }
+
