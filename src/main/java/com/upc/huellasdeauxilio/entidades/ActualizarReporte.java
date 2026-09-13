@@ -6,22 +6,24 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Ciudadano {
+public class ActualizarReporte {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idCiudadano;
-
-    private String dni;
-    private String distrito;
-    private String nombreCompleto;
+    private Long idActualizacion;
 
     @ManyToOne
-    @JoinColumn(name = "id_usuario")
-    private Usuario usuario;
+    @JoinColumn(name = "id_reporte")
+    private Reporte reporte;
+
+    private String descripcionActu;
+
+    private LocalDateTime fechaActualizacion;
 }

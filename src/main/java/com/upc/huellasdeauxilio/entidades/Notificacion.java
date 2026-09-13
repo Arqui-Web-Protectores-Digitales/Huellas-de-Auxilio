@@ -11,17 +11,21 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Ciudadano {
+public class Notificacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idCiudadano;
+    private Long idNotificacion;
 
-    private String dni;
-    private String distrito;
-    private String nombreCompleto;
+    @ManyToOne
+    @JoinColumn(name = "id_reporte")
+    private Reporte reporte;
 
     @ManyToOne
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
+
+    private String descripcion;
+    private Boolean estadoNotificacion;
+    private String titulo;
 }
