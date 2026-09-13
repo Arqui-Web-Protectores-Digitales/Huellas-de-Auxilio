@@ -5,6 +5,8 @@ import com.upc.huellasdeauxilio.repositorios.EntidadRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class EntidadServicio {
 
@@ -19,7 +21,19 @@ public class EntidadServicio {
         return entidadRepositorio.findByUsuario_IdUsuario(idUsuario);
     }
 
-    public Entidad buscarPorZonaAtencion(String zonaAtencion) {
-        return entidadRepositorio.findByZonaAtencion(zonaAtencion);
+    public List<Entidad> buscarPorZonaAtencion(String zonaAtencion) {
+        return entidadRepositorio.findByZonaAtencionContainingIgnoreCase(zonaAtencion);
+    }
+
+    public List<Entidad> listarTodas() {
+        return entidadRepositorio.findAll();
+    }
+
+    public Entidad buscarPorId(Long idEntidad) {
+        return entidadRepositorio.findById(idEntidad).orElse(null);
+    }
+
+    public List<Entidad> buscarPorNombre(String nombre) {
+        return entidadRepositorio.findByNombreEntidadContainingIgnoreCase(nombre);
     }
 }

@@ -5,6 +5,10 @@ import com.upc.huellasdeauxilio.repositorios.ReporteRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Service
 public class ReporteServicio {
 
@@ -37,4 +41,29 @@ public class ReporteServicio {
 
         return null;
     }
+
+    public List<Reporte> listarPorCiudadano(Long idCiudadano) {
+        return reporteRepositorio.findByCiudadano_IdCiudadano(idCiudadano);
+    }
+
+    public Reporte buscarPorCodigoYCiudadano(Long idReporte, Long idCiudadano) {
+        return reporteRepositorio.findByIdReporteAndCiudadano_IdCiudadano(idReporte, idCiudadano);
+    }
+
+    public Map<String, Long> obtenerResumenCiudadano(Long idCiudadano) {
+        long total = reporteRepositorio.countByCiudadano_IdCiudadano(idCiudadano);
+        long enRevision = reporteRepositorio.countByCiudadano_IdCiudadanoAndEstado(idCiudadano, "ER");
+        long atendidos = reporteRepositorio.countByCiudadano_IdCiudadanoAndEstado(idCiudadano, "AT");
+
+        Map<String, Long> resumen = new HashMap<>();
+        resumen.put("total", total);
+        resumen.put("enRevision", enRevision);
+        resumen.put("atendidos", atendidos);
+        return resumen;
+    }
+
+    public List<Reporte> filtrarReportes(Long idCiudadano, String estado, String urgencia, String distrito) {
+        return reporteRepositorio.filtrarReportes(idCiudadano, estado, urgencia, distrito);
+    }
+
 }
