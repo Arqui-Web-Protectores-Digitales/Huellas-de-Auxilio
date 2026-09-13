@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalTime;
+
 @Entity
 @Setter
 @Getter
@@ -19,6 +21,11 @@ public class Entidad {
 
     private String nombreEntidad;
     private String zonaAtencion;
+
+    private String sitioWeb;
+    private LocalTime fechaAtencionInicio;
+    private LocalTime fechaAtencionFinal;
+    private String diasAtencion;
 
     @ManyToOne
     @JoinColumn(name = "id_usuario")

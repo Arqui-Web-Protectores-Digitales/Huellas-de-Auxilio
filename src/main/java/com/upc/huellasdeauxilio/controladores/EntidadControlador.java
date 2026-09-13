@@ -5,6 +5,8 @@ import com.upc.huellasdeauxilio.servicios.EntidadServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 public class EntidadControlador {
@@ -22,8 +24,23 @@ public class EntidadControlador {
         return entidadServicio.buscarPorUsuario(idUsuario);
     }
 
-    @GetMapping("/entidad/zona/{zonaAtencion}")
-    public Entidad buscarPorZonaAtencion(@PathVariable String zonaAtencion) {
+    @GetMapping("/entidades/zona/{zonaAtencion}")
+    public List<Entidad> buscarPorZonaAtencion(@PathVariable String zonaAtencion) {
         return entidadServicio.buscarPorZonaAtencion(zonaAtencion);
+    }
+
+    @GetMapping("/entidades")
+    public List<Entidad> listarTodas() {
+        return entidadServicio.listarTodas();
+    }
+
+    @GetMapping("/entidad/detalle/{idEntidad}")
+    public Entidad buscarPorId(@PathVariable Long idEntidad) {
+        return entidadServicio.buscarPorId(idEntidad);
+    }
+
+    @GetMapping("/entidades/nombre/{nombre}")
+    public List<Entidad> buscarPorNombre(@PathVariable String nombre) {
+        return entidadServicio.buscarPorNombre(nombre);
     }
 }

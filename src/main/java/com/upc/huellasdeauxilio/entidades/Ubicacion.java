@@ -20,5 +20,6 @@ public class Ubicacion {
     private String direccion;
     private String distrito;
     private String referencia;
-    private Float coordenada;
+    private Float latitud;
+    private Float longitud;
 }
