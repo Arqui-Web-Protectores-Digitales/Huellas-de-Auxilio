@@ -1,8 +1,11 @@
 package com.upc.huellasdeauxilio.servicios;
 
+import com.upc.huellasdeauxilio.entidades.Entidad;
 import com.upc.huellasdeauxilio.entidades.Notificacion;
 import com.upc.huellasdeauxilio.entidades.Reporte;
+import com.upc.huellasdeauxilio.entidades.Ubicacion;
 import com.upc.huellasdeauxilio.repositorios.ReporteRepositorio;
+import com.upc.huellasdeauxilio.repositorios.UbicacionRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +22,22 @@ public class ReporteServicio {
     @Autowired
     private NotificacionServicio notificacionServicio;
 
+    @Autowired
+    private UbicacionRepositorio ubicacionRepositorio;
+
+    @Autowired
+    private EntidadServicio entidadServicio;
+
     public Reporte insertar(Reporte reporte) {
+
+        Ubicacion ubicacion = ubicacionRepositorio.findById(reporte.getUbicacion().getIdUbicacion()).orElse(null);
+
+        if (ubicacion != null && ubicacion.getLatitud() != null && ubicacion.getLongitud() != null) {
+            Entidad entidadCercana = entidadServicio.obtenerEntidadMasCercana(ubicacion.getLatitud(), ubicacion.getLongitud());
+
+            reporte.setEntidad(entidadCercana);
+        }
+
         Reporte reporteGuardado = reporteRepositorio.save(reporte);
 
 
@@ -118,7 +136,6 @@ public class ReporteServicio {
     public List<Reporte> filtrarReportesEntidad(Long idEntidad, String estado, String urgencia, String distrito) {
         return reporteRepositorio.filtrarReportesPorEntidad(idEntidad, estado, urgencia, distrito);
     }
-
 
 
 }

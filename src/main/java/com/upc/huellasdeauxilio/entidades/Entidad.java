@@ -30,4 +30,7 @@ public class Entidad {
     @ManyToOne
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
+
+    private Float latitud;
+    private Float longitud;
 }
