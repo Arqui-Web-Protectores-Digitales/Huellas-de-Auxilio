@@ -42,6 +42,7 @@ public class ReporteServicio {
         return null;
     }
 
+    // para Ciudadano
     public List<Reporte> listarPorCiudadano(Long idCiudadano) {
         return reporteRepositorio.findByCiudadano_IdCiudadano(idCiudadano);
     }
@@ -64,6 +65,27 @@ public class ReporteServicio {
 
     public List<Reporte> filtrarReportes(Long idCiudadano, String estado, String urgencia, String distrito) {
         return reporteRepositorio.filtrarReportes(idCiudadano, estado, urgencia, distrito);
+    }
+
+    // para  Entidad
+    public List<Reporte> listarPorEntidad(Long idEntidad) {
+        return reporteRepositorio.findByEntidad_IdEntidadOrderByFechaReporteDesc(idEntidad);
+    }
+
+    public Map<String, Long> obtenerResumenEntidad(Long idEntidad) {
+        long total = reporteRepositorio.countByEntidad_IdEntidad(idEntidad);
+        long enRevision = reporteRepositorio.countByEntidad_IdEntidadAndEstado(idEntidad, "ER");
+        long atendidos = reporteRepositorio.countByEntidad_IdEntidadAndEstado(idEntidad, "AT");
+
+        Map<String, Long> resumen = new HashMap<>();
+        resumen.put("total", total);
+        resumen.put("enRevision", enRevision);
+        resumen.put("atendidos", atendidos);
+        return resumen;
+    }
+
+    public List<Reporte> filtrarReportesEntidad(Long idEntidad, String estado, String urgencia, String distrito) {
+        return reporteRepositorio.filtrarReportesPorEntidad(idEntidad, estado, urgencia, distrito);
     }
 
 }
