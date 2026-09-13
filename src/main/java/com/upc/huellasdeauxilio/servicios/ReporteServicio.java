@@ -1,5 +1,6 @@
 package com.upc.huellasdeauxilio.servicios;
 
+import com.upc.huellasdeauxilio.entidades.Notificacion;
 import com.upc.huellasdeauxilio.entidades.Reporte;
 import com.upc.huellasdeauxilio.repositorios.ReporteRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +16,35 @@ public class ReporteServicio {
     @Autowired
     private ReporteRepositorio reporteRepositorio;
 
+    @Autowired
+    private NotificacionServicio notificacionServicio;
+
     public Reporte insertar(Reporte reporte) {
-        return reporteRepositorio.save(reporte);
+        Reporte reporteGuardado = reporteRepositorio.save(reporte);
+
+
+        Notificacion notiCiudadano = new Notificacion();
+        notiCiudadano.setReporte(reporteGuardado);
+
+        notiCiudadano.setUsuario(reporteGuardado.getCiudadano().getUsuario());
+        notiCiudadano.setTitulo("Reporte Registrado");
+        notiCiudadano.setDescripcion("Tu reporte ha sido registrado y enviado exitosamente.");
+        notificacionServicio.insertar(notiCiudadano);
+
+        if(reporteGuardado.getEntidad() != null) {
+            Notificacion notiEntidad = new Notificacion();
+            notiEntidad.setReporte(reporteGuardado);
+
+            notiEntidad.setUsuario(reporteGuardado.getEntidad().getUsuario());
+            notiEntidad.setTitulo("Nuevo Reporte Asignado");
+            notiEntidad.setDescripcion("Se te ha asignado un nuevo caso de maltrato animal.");
+            notificacionServicio.insertar(notiEntidad);
+        }
+
+        return reporteGuardado;
     }
 
     public Reporte actualizarEstado(Long idReporte, String nuevoEstado) {
-
         Reporte reporte = reporteRepositorio.findById(idReporte).orElse(null);
 
         if (reporte == null) {
@@ -29,14 +53,21 @@ public class ReporteServicio {
 
         String estadoActual = reporte.getEstado();
 
-        if (estadoActual.equals("R") && nuevoEstado.equals("ER")) {
-            reporte.setEstado(nuevoEstado);
-            return reporteRepositorio.save(reporte);
-        }
 
-        if (estadoActual.equals("ER") && nuevoEstado.equals("AT")) {
+        if ((estadoActual.equals("R") && nuevoEstado.equals("ER")) ||
+                (estadoActual.equals("ER") && nuevoEstado.equals("AT"))) {
+
             reporte.setEstado(nuevoEstado);
-            return reporteRepositorio.save(reporte);
+            Reporte reporteActualizado = reporteRepositorio.save(reporte);
+
+            Notificacion notiCiudadano = new Notificacion();
+            notiCiudadano.setReporte(reporteActualizado);
+            notiCiudadano.setUsuario(reporteActualizado.getCiudadano().getUsuario());
+            notiCiudadano.setTitulo("Actualización de Reporte");
+            notiCiudadano.setDescripcion("Tu reporte ha cambiado al estado: " + nuevoEstado);
+            notificacionServicio.insertar(notiCiudadano);
+
+            return reporteActualizado;
         }
 
         return null;
@@ -87,5 +118,7 @@ public class ReporteServicio {
     public List<Reporte> filtrarReportesEntidad(Long idEntidad, String estado, String urgencia, String distrito) {
         return reporteRepositorio.filtrarReportesPorEntidad(idEntidad, estado, urgencia, distrito);
     }
+
+
 
 }

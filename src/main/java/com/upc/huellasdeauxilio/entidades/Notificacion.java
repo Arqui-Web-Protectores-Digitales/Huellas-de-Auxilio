@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -28,4 +30,6 @@ public class Notificacion {
     private String descripcion;
     private Boolean estadoNotificacion;
     private String titulo;
+
+    private LocalDateTime fechaNotificacion;
 }
