@@ -47,4 +47,8 @@ public interface ReporteRepositorio extends JpaRepository<Reporte, Long> {
             @Param("urgencia") String urgencia,
             @Param("distrito") String distrito
     );
+
+    Reporte findByIdReporte(Long idReporte);
+
+
 }

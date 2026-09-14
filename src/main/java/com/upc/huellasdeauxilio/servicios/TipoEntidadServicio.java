@@ -15,5 +15,10 @@ public class TipoEntidadServicio {
         return tipoEntidadRepositorio.save(tipoEntidad);
     }
 
+    //BuscarEntidadPorId
+    public TipoEntidad buscarPorId(Long Id){
+        return tipoEntidadRepositorio.findByEntidad_IdEntidad(Id);
+    }
+
     
 }

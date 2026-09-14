@@ -137,5 +137,9 @@ public class ReporteServicio {
         return reporteRepositorio.filtrarReportesPorEntidad(idEntidad, estado, urgencia, distrito);
     }
 
+    //Buscar Por Id cuando una entidad requiera de visualizar una entidads
+    public Reporte buscarPorId(Long Id){
 
+        return reporteRepositorio.findByIdReporte(Id);
+    }
 }

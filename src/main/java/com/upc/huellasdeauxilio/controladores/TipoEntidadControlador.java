@@ -16,4 +16,10 @@ public class TipoEntidadControlador {
     public TipoEntidad insertar(@RequestBody TipoEntidad tipoEntidad) {
         return tipoEntidadServicio.insertar(tipoEntidad);
     }
+
+    //BuscarEntidadPorId
+    @GetMapping("/tipoEntidad/{Id}")
+    public TipoEntidad buscarPorId(@PathVariable Long Id){
+        return tipoEntidadServicio.buscarPorId(Id);
+    }
 }
