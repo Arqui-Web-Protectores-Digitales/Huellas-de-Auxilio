@@ -36,4 +36,11 @@ public class UsuarioControlador {
                 usuario.getContraseña()
         );
     }
+    //ELIMINADO LOGICO DE USUARIO
+    @PutMapping("/usuario/{correo}/{contraseña}")
+    public String EliminadoLogico(@PathVariable String correo, @PathVariable String contraseña){
+
+        return usuarioServicio.eliminadoLogico(correo, contraseña);
+    }
+
 }

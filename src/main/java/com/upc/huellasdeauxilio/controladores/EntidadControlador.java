@@ -5,6 +5,7 @@ import com.upc.huellasdeauxilio.servicios.EntidadServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Time;
 import java.util.List;
 
 @RestController
@@ -43,4 +44,17 @@ public class EntidadControlador {
     public List<Entidad> buscarPorNombre(@PathVariable String nombre) {
         return entidadServicio.buscarPorNombre(nombre);
     }
+
+    //Modificar una entidad ya existente
+    @PutMapping("/entidades/{Id}")
+    public String modificarEntidad(@PathVariable Long Id, @RequestBody Entidad entidad) {
+        entidadServicio.modificarEntidad(Id, entidad);
+        return "OK";
+    }
+    //Modificar la contraseña de un usuario perteneciente a una ENTIDAD EXISTENTE
+    @PutMapping("/entidades/{Id}/contraseñanueva")
+    public void modificarContraseñaEntidad(@PathVariable Long Id, @RequestBody String contraseñanueva){
+        entidadServicio.modificarContraseñaEntidad(Id, contraseñanueva);
+    }
+
 }

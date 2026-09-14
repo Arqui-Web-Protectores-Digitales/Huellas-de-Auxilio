@@ -14,4 +14,6 @@ public class TipoEntidadServicio {
     public TipoEntidad insertar(TipoEntidad tipoEntidad) {
         return tipoEntidadRepositorio.save(tipoEntidad);
     }
+
+    
 }

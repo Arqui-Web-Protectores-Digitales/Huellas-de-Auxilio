@@ -1,6 +1,8 @@
 package com.upc.huellasdeauxilio.servicios;
 
+import com.upc.huellasdeauxilio.repositorios.UsuarioRepositorio;
 import com.upc.huellasdeauxilio.entidades.Entidad;
+import com.upc.huellasdeauxilio.entidades.Usuario;
 import com.upc.huellasdeauxilio.repositorios.EntidadRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,8 @@ public class EntidadServicio {
 
     @Autowired
     private EntidadRepositorio entidadRepositorio;
+    @Autowired
+    private UsuarioRepositorio usuarioRepositorio;
 
     public Entidad insertar(Entidad entidad) {
         return entidadRepositorio.save(entidad);
@@ -74,6 +78,31 @@ public class EntidadServicio {
         return RADIO_TIERRA * c; // retorna la distancia en Kilómetros
     }
 
+    //modificar una entidad ya existente
+    public void modificarEntidad(Long Id, Entidad entidad){
 
+        Entidad entidadExistente =entidadRepositorio.findById(Id).orElse(null);
 
+        if(entidadExistente != null){
+
+            entidadExistente.setNombreEntidad(entidad.getNombreEntidad());
+            entidadExistente.setZonaAtencion(entidad.getZonaAtencion());
+            entidadExistente.setSitioWeb(entidad.getSitioWeb());
+            entidadExistente.setFechaAtencionInicio(entidad.getFechaAtencionInicio());
+            entidadExistente.setFechaAtencionFinal(entidad.getFechaAtencionFinal());
+            entidadExistente.setDiasAtencion(entidad.getDiasAtencion());
+
+            entidadRepositorio.save(entidadExistente);
+
+        }
+    }
+    //Modificar la contraseña de una entidad ya registrada
+    public void modificarContraseñaEntidad(Long idEntidad, String contraseñanueva){
+        Entidad entidad =  entidadRepositorio.findById(idEntidad).orElse(null);
+        if(entidad != null && entidad.getUsuario() != null){
+            Usuario usuario = entidad.getUsuario();
+            usuario.setContraseña(contraseñanueva);
+            usuarioRepositorio.save(usuario);
+        }
+    }
 }
