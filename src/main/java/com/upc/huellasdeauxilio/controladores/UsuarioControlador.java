@@ -14,7 +14,7 @@ public class UsuarioControlador {
     private UsuarioServicio usuarioServicio;
 
     @PostMapping("/usuario")
-    public Usuario insertar(@RequestBody Usuario usuario) {
+    public Usuario insertar(@RequestBody Usuario usuario)  {
         return usuarioServicio.insertar(usuario);
     }
 

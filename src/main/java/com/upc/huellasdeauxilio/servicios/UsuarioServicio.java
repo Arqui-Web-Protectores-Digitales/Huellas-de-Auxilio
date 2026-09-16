@@ -12,6 +12,7 @@ public class UsuarioServicio {
     private UsuarioRepositorio usuarioRepositorio;
 
     public Usuario insertar(Usuario usuario) {
+
         return usuarioRepositorio.save(usuario);
     }
 
@@ -39,7 +40,7 @@ public class UsuarioServicio {
 
         Usuario usuario = usuarioRepositorio.findByCorreoAndContraseña(correo, contraseña);
         if (usuario != null) {
-            usuario.setEstadoUsuario(true);
+            usuario.setEstadoUsuario(false);
             usuarioRepositorio.save(usuario);
             return "Usuario encontrado";
         } else {
