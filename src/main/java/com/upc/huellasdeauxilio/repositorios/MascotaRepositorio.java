@@ -41,4 +41,32 @@ public interface MascotaRepositorio extends JpaRepository<Mascota, Long> {
             String edad,
             String distrito
     );
+
+    List<Mascota> findByEntidadIdEntidadAndEstadoTrue(Long idEntidad);
+
+    @Query("""
+    SELECT m
+    FROM Mascota m
+    WHERE m.entidad.idEntidad = ?1
+      AND m.estado = true
+      AND (
+          ?2 = 'todos'
+          OR LOWER(m.nombre) LIKE CONCAT('%', LOWER(?2), '%')
+          )
+      AND (
+          ?3 = 'todos'
+          OR LOWER(m.especie) = LOWER(?3)
+          )
+      AND (
+          ?4 = 'todos'
+          OR LOWER(m.edad) = LOWER(?4)
+          )
+    ORDER BY m.idMascota DESC
+    """)
+    List<Mascota> filtrarMascotasPorEntidad(
+            Long idEntidad,
+            String busqueda,
+            String especie,
+            String edad
+    );
 }

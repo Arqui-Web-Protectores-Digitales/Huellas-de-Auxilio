@@ -4,10 +4,7 @@ package com.upc.huellasdeauxilio.controladores;
 import com.upc.huellasdeauxilio.entidades.Mascota;
 import com.upc.huellasdeauxilio.servicios.MascotaServicio;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -39,4 +36,32 @@ public class MascotaControlador {
         return mascotaServicio.filtrarMascotas(nombre, especie, edad, distrito);
     }
     //para limpiar los filtros se vuelve a consultar /api/mascotas
+
+    @GetMapping("/mascotas/entidad/{idEntidad}")
+    public List<Mascota> listarMascotasPorEntidad(@PathVariable Long idEntidad)
+    {
+        return mascotaServicio.listarDisponiblesPorEntidad(idEntidad);
+    }
+
+    @GetMapping("/mascotas/entidad/{idEntidad}/filtrar/{busqueda}/{especie}/{edad}")
+    public List<Mascota> filtrarMascotasPorEntidad(@PathVariable Long idEntidad,
+                                                   @PathVariable String busqueda,
+                                                   @PathVariable String especie,
+                                                   @PathVariable String edad)
+    {
+        return mascotaServicio.filtrarMascotasPorEntidad(
+                idEntidad,
+                busqueda,
+                especie,
+                edad
+        );
+    }
+
+    @PostMapping("/mascotas/entidad/{idEntidad}")
+    public Mascota publicarMascota(@PathVariable Long idEntidad,
+                                   @RequestBody Mascota mascota)
+    {
+        return mascotaServicio.publicarMascota(idEntidad, mascota);
+    }
+
 }

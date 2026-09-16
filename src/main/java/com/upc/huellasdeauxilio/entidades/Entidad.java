@@ -20,6 +20,7 @@ public class Entidad {
     private Long idEntidad;
 
     private String nombreEntidad;
+    private String tipoEntidad;
     private String zonaAtencion;
 
     private String sitioWeb;
