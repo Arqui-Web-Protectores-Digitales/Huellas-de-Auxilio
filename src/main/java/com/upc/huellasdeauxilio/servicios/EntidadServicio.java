@@ -83,35 +83,37 @@ public class EntidadServicio {
     public Entidad modificarEntidad(Long Id, String nombre, String tipoentidad, String zonaatencion, String sitioweb, LocalTime fechainicioatencion, LocalTime fechafinalatencion, String diasatencion, Float latitud, Float longitud){
 
         Entidad entidad = entidadRepositorio.findById(Id).orElse(null);
-
-        if(entidad!=null && nombre != null){
-            entidad.setNombreEntidad(nombre);
+        if(entidad!=null){
+            if(nombre != null){
+                entidad.setNombreEntidad(nombre);
+            }
+            if(tipoentidad != null){
+                entidad.setTipoEntidad(tipoentidad);
+            }
+            if(zonaatencion != null){
+                entidad.setZonaAtencion(zonaatencion);
+            }
+            if(sitioweb != null){
+                entidad.setSitioWeb(sitioweb);
+            }
+            if(fechainicioatencion != null){
+                entidad.setFechaAtencionInicio(fechainicioatencion);
+            }
+            if(fechafinalatencion != null){
+                entidad.setFechaAtencionFinal(fechafinalatencion);
+            }
+            if(diasatencion != null){
+                entidad.setDiasAtencion(diasatencion);
+            }
+            if(longitud != null){
+                entidad.setLongitud(longitud);
+            }
+            if(latitud  != null){
+                entidad.setLatitud(latitud);
+            }
+            return entidadRepositorio.save(entidad);
         }
-        if(entidad!=null && tipoentidad != null){
-            entidad.setTipoEntidad(tipoentidad);
-        }
-        if(entidad!=null && zonaatencion != null){
-            entidad.setZonaAtencion(zonaatencion);
-        }
-        if(entidad!=null && sitioweb != null){
-            entidad.setSitioWeb(sitioweb);
-        }
-        if(entidad!=null && fechainicioatencion != null){
-            entidad.setFechaAtencionInicio(fechainicioatencion);
-        }
-        if(entidad!=null && fechafinalatencion != null){
-            entidad.setFechaAtencionFinal(fechafinalatencion);
-        }
-        if(entidad!=null && diasatencion != null){
-            entidad.setDiasAtencion(diasatencion);
-        }
-        if(entidad!=null && longitud != null){
-            entidad.setLongitud(longitud);
-        }
-        if(entidad!=null && latitud  != null){
-            entidad.setLatitud(latitud);
-        }
-        return entidadRepositorio.save(entidad);
+        return null;
     }
     //Modificar la contraseña de una entidad ya registrada
     public void modificarContraseñaEntidad(Long idEntidad, String contraseñanueva){
