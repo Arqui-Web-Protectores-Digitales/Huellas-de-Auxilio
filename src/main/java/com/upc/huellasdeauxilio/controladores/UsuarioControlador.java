@@ -3,6 +3,7 @@ package com.upc.huellasdeauxilio.controladores;
 import com.upc.huellasdeauxilio.entidades.Usuario;
 import com.upc.huellasdeauxilio.servicios.UsuarioServicio;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
@@ -39,11 +40,10 @@ public class UsuarioControlador {
     }
 
     //ELIMINADO LOGICO DE USUARIO
-    @PutMapping("/usuario/{correo}/{contraseña}")
-    public String EliminadoLogico(@PathVariable String correo,
-                                  @PathVariable String contraseña) {
+    @PutMapping("/usuario/usuario/{Id}")
+    public Usuario EliminadoLogico(@RequestBody Usuario usuario, @PathVariable Long Id) {
 
-        return usuarioServicio.eliminadoLogico(correo, contraseña);
+        return usuarioServicio.eliminadoLogico(usuario.getCorreo(), usuario.getContraseña(), Id);
     }
 
     @PutMapping("/usuario/perfil/contrasena/{correo}")
