@@ -1,9 +1,12 @@
 package com.upc.huellasdeauxilio.servicios;
 
+import com.upc.huellasdeauxilio.repositorios.UsuarioRepositorio;
 import com.upc.huellasdeauxilio.entidades.Entidad;
+import com.upc.huellasdeauxilio.entidades.Usuario;
 import com.upc.huellasdeauxilio.repositorios.EntidadRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.time.LocalTime;
 
 import java.util.List;
 
@@ -12,6 +15,8 @@ public class EntidadServicio {
 
     @Autowired
     private EntidadRepositorio entidadRepositorio;
+    @Autowired
+    private UsuarioRepositorio usuarioRepositorio;
 
     public Entidad insertar(Entidad entidad) {
         return entidadRepositorio.save(entidad);
@@ -74,6 +79,49 @@ public class EntidadServicio {
         return RADIO_TIERRA * c; // retorna la distancia en Kilómetros
     }
 
+    //modificar una entidad ya existente
+    public Entidad modificarEntidad(Long Id, String nombre, String tipoentidad, String zonaatencion, String sitioweb, LocalTime fechainicioatencion, LocalTime fechafinalatencion, String diasatencion, Float latitud, Float longitud){
 
-
+        Entidad entidad = entidadRepositorio.findById(Id).orElse(null);
+        if(entidad!=null){
+            if(nombre != null){
+                entidad.setNombreEntidad(nombre);
+            }
+            if(tipoentidad != null){
+                entidad.setTipoEntidad(tipoentidad);
+            }
+            if(zonaatencion != null){
+                entidad.setZonaAtencion(zonaatencion);
+            }
+            if(sitioweb != null){
+                entidad.setSitioWeb(sitioweb);
+            }
+            if(fechainicioatencion != null){
+                entidad.setFechaAtencionInicio(fechainicioatencion);
+            }
+            if(fechafinalatencion != null){
+                entidad.setFechaAtencionFinal(fechafinalatencion);
+            }
+            if(diasatencion != null){
+                entidad.setDiasAtencion(diasatencion);
+            }
+            if(longitud != null){
+                entidad.setLongitud(longitud);
+            }
+            if(latitud  != null){
+                entidad.setLatitud(latitud);
+            }
+            return entidadRepositorio.save(entidad);
+        }
+        return null;
+    }
+    //Modificar la contraseña de una entidad ya registrada
+    public void modificarContraseñaEntidad(Long idEntidad, String contraseñanueva){
+        Entidad entidad =  entidadRepositorio.findById(idEntidad).orElse(null);
+        if(entidad != null && entidad.getUsuario() != null){
+            Usuario usuario = entidad.getUsuario();
+            usuario.setContraseña(contraseñanueva);
+            usuarioRepositorio.save(usuario);
+        }
+    }
 }

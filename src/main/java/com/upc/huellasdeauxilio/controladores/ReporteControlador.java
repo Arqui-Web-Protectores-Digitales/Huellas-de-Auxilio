@@ -77,5 +77,10 @@ public class ReporteControlador {
         return reporteServicio.filtrarReportesEntidad(idEntidad, estado, urgencia, distrito);
     }
 
+    //BuscarPor Id cuando una Entidad o Usuario lo requiera
+    @GetMapping("/reportes_1/{Id}")
+    public Reporte buscarPorId(Long Id){
+        return reporteServicio.buscarPorId(Id);
+    }
 
 }
