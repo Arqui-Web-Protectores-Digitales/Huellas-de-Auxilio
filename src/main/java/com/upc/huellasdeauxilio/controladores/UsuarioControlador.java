@@ -14,7 +14,7 @@ public class UsuarioControlador {
     private UsuarioServicio usuarioServicio;
 
     @PostMapping("/usuario")
-    public Usuario insertar(@RequestBody Usuario usuario) {
+    public Usuario insertar(@RequestBody Usuario usuario)  {
         return usuarioServicio.insertar(usuario);
     }
 
@@ -36,6 +36,14 @@ public class UsuarioControlador {
                 correo,
                 usuario.getContraseña()
         );
+    }
+
+    //ELIMINADO LOGICO DE USUARIO
+    @PutMapping("/usuario/{correo}/{contraseña}")
+    public String EliminadoLogico(@PathVariable String correo,
+                                  @PathVariable String contraseña) {
+
+        return usuarioServicio.eliminadoLogico(correo, contraseña);
     }
 
     @PutMapping("/usuario/perfil/contrasena/{correo}")
