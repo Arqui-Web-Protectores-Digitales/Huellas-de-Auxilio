@@ -96,6 +96,16 @@ public class SolicitudServicio {
 
         notificacionServicio.insertar(notiCiudadano);
 
+        if (mascota.getEntidad() != null) {
+            Notificacion notiEntidad = new Notificacion();
+            notiEntidad.setSolicitud(solicitudGuardada);
+            notiEntidad.setUsuario(mascota.getEntidad().getUsuario());
+            notiEntidad.setTitulo("Nueva Solicitud de Adopción");
+            notiEntidad.setDescripcion("Tienes una nueva solicitud de adopción para la mascota: " + mascota.getNombre());
+            notiEntidad.setFechaNotificacion(LocalDateTime.now());
+            notificacionServicio.insertar(notiEntidad);
+        }
+
         return solicitudGuardada;
     }
 
