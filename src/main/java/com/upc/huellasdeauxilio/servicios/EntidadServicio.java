@@ -19,6 +19,24 @@ public class EntidadServicio {
     private UsuarioRepositorio usuarioRepositorio;
 
     public Entidad insertar(Entidad entidad) {
+
+        if (entidad == null
+                || entidad.getUsuario() == null
+                || entidad.getUsuario().getIdUsuario() == null) {
+            return null;
+        }
+
+        Long idUsuario = entidad.getUsuario().getIdUsuario();
+
+        Usuario usuario = usuarioRepositorio.findById(idUsuario)
+                .orElse(null);
+
+        if (usuario == null) {
+            return null;
+        }
+
+        entidad.setUsuario(usuario);
+
         return entidadRepositorio.save(entidad);
     }
 

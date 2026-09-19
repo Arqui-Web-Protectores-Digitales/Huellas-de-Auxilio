@@ -18,6 +18,24 @@ public class CiudadanoServicio {
     private UsuarioRepositorio usuarioRepositorio;
 
     public Ciudadano insertar(Ciudadano ciudadano) {
+
+        if (ciudadano == null
+                || ciudadano.getUsuario() == null
+                || ciudadano.getUsuario().getIdUsuario() == null) {
+            return null;
+        }
+
+        Long idUsuario = ciudadano.getUsuario().getIdUsuario();
+
+        Usuario usuario = usuarioRepositorio.findById(idUsuario)
+                .orElse(null);
+
+        if (usuario == null) {
+            return null;
+        }
+
+        ciudadano.setUsuario(usuario);
+
         return ciudadanoRepositorio.save(ciudadano);
     }
 
