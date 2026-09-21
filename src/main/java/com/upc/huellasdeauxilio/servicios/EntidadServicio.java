@@ -142,4 +142,10 @@ public class EntidadServicio {
             usuarioRepositorio.save(usuario);
         }
     }
+
+    //Buscar una entidad cuando sea requerido
+
+    public Entidad buscarEntidadPorId(Long Id){
+        return entidadRepositorio.findById(Id).orElse(null);
+    }
 }

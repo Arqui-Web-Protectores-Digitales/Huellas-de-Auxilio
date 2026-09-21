@@ -79,7 +79,7 @@ public class ReporteControlador {
 
     //BuscarPor Id cuando una Entidad o Usuario lo requiera
     @GetMapping("/reportes_1/{Id}")
-    public Reporte buscarPorId(Long Id){
+    public Reporte buscarPorId(@PathVariable Long Id){
         return reporteServicio.buscarPorId(Id);
     }
 

@@ -71,4 +71,9 @@ public class EntidadControlador {
         entidadServicio.modificarContraseñaEntidad(Id, contraseñanueva);
     }
 
+    @GetMapping ("/entidades/{Id}")
+    public Entidad buscarEntidadPorId(@PathVariable Long Id){
+        return entidadServicio.buscarEntidadPorId(Id);
+    }
+
 }
