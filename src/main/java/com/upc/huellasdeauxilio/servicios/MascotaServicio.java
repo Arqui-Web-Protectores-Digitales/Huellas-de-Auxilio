@@ -72,6 +72,26 @@ public class MascotaServicio {
     }
     public Mascota publicarMascota(Long idEntidad, Mascota mascota) {
 
+        if (mascota == null
+                || mascota.getNombre() == null
+                || mascota.getNombre().isBlank()
+                || mascota.getEspecie() == null
+                || mascota.getEspecie().isBlank()
+                || mascota.getEdad() == null
+                || mascota.getEdad().isBlank()
+                || mascota.getSexo() == null
+                || mascota.getSexo().isBlank()
+                || mascota.getDistrito() == null
+                || mascota.getDistrito().isBlank()
+                || mascota.getTamaño() == null
+                || mascota.getTamaño().isBlank()
+                || mascota.getDescripcion() == null
+                || mascota.getDescripcion().isBlank()
+                || mascota.getUrlFoto() == null
+                || mascota.getUrlFoto().isBlank()) {
+            return null;
+        }
+
         Entidad entidad = entidadRepositorio.findById(idEntidad).orElse(null);
 
         if (entidad == null) {
@@ -80,6 +100,59 @@ public class MascotaServicio {
 
         mascota.setEntidad(entidad);
         mascota.setEstado(true);
+
+        return mascotaRepositorio.save(mascota);
+    }
+
+    public Mascota editarMascota(Long idMascota, Mascota datosMascota) {
+
+        if (datosMascota == null
+                || datosMascota.getNombre() == null
+                || datosMascota.getNombre().isBlank()
+                || datosMascota.getEspecie() == null
+                || datosMascota.getEspecie().isBlank()
+                || datosMascota.getEdad() == null
+                || datosMascota.getEdad().isBlank()
+                || datosMascota.getSexo() == null
+                || datosMascota.getSexo().isBlank()
+                || datosMascota.getDistrito() == null
+                || datosMascota.getDistrito().isBlank()
+                || datosMascota.getTamaño() == null
+                || datosMascota.getTamaño().isBlank()
+                || datosMascota.getDescripcion() == null
+                || datosMascota.getDescripcion().isBlank()
+                || datosMascota.getUrlFoto() == null
+                || datosMascota.getUrlFoto().isBlank()) {
+            return null;
+        }
+
+        Mascota mascota = buscarPorId(idMascota);
+
+        if (mascota == null) {
+            return null;
+        }
+
+        mascota.setNombre(datosMascota.getNombre());
+        mascota.setEspecie(datosMascota.getEspecie());
+        mascota.setEdad(datosMascota.getEdad());
+        mascota.setSexo(datosMascota.getSexo());
+        mascota.setDistrito(datosMascota.getDistrito());
+        mascota.setTamaño(datosMascota.getTamaño());
+        mascota.setDescripcion(datosMascota.getDescripcion());
+        mascota.setUrlFoto(datosMascota.getUrlFoto());
+
+        return mascotaRepositorio.save(mascota);
+    }
+
+    public Mascota cambiarEstado(Long idMascota, Boolean estado) {
+
+        Mascota mascota = buscarPorId(idMascota);
+
+        if (mascota == null || estado == null) {
+            return null;
+        }
+
+        mascota.setEstado(estado);
 
         return mascotaRepositorio.save(mascota);
     }

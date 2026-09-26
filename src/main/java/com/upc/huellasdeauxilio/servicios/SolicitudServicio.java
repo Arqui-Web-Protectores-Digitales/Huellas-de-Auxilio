@@ -5,14 +5,10 @@ import com.upc.huellasdeauxilio.entidades.Mascota;
 import com.upc.huellasdeauxilio.entidades.Notificacion;
 import com.upc.huellasdeauxilio.entidades.Solicitud;
 import com.upc.huellasdeauxilio.repositorios.CiudadanoRepositorio;
-import com.upc.huellasdeauxilio.repositorios.MascotaRepositorio;
-import com.upc.huellasdeauxilio.repositorios.NotificacionRepositorio;
 import com.upc.huellasdeauxilio.repositorios.SolicitudRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -76,7 +72,7 @@ public class SolicitudServicio {
         solicitud.setMotivo(datos.getMotivo().trim());
         solicitud.setExperiencia(datos.getExperiencia());
         solicitud.setFechaSolicitud(LocalDateTime.now());
-        solicitud.setEstadoSolicitud("ENVIADA");
+        solicitud.setEstadoSolicitud("EN_REVISION");
 
         Solicitud solicitudGuardada =
                 solicitudRepositorio.save(solicitud);
@@ -162,7 +158,6 @@ public class SolicitudServicio {
         String estadoFiltro = normalizarFiltro(estado);
 
         if (!estadoFiltro.equals("todos")
-                && !estadoFiltro.equals("enviada")
                 && !estadoFiltro.equals("en_revision")
                 && !estadoFiltro.equals("aprobada")
                 && !estadoFiltro.equals("rechazada")) {
@@ -173,6 +168,83 @@ public class SolicitudServicio {
         return solicitudRepositorio.filtrarSolicitudes(
                 idCiudadano,
                 normalizarFiltro(nombreMascota),
+                estadoFiltro
+        );
+    }
+    public List<Solicitud> listarPorMascota(Long idMascota) {
+
+        if (idMascota == null) {
+            return null;
+        }
+
+        Mascota mascota = mascotaServicio.buscarPorId(idMascota);
+
+        if (mascota == null) {
+            return null;
+        }
+
+        return solicitudRepositorio
+                .findByMascota_IdMascotaOrderByFechaSolicitudDesc(idMascota);
+    }
+
+    public Solicitud buscarPorSolicitudYMascota(
+            Long idSolicitud,
+            Long idMascota
+    ) {
+        if (idSolicitud == null || idMascota == null) {
+            return null;
+        }
+
+        Mascota mascota = mascotaServicio.buscarPorId(idMascota);
+
+        if (mascota == null) {
+            return null;
+        }
+
+        return solicitudRepositorio
+                .findByIdSolicitudAndMascota_IdMascota(
+                        idSolicitud,
+                        idMascota
+                );
+    }
+
+    public List<Solicitud> listarPorEntidad(Long idEntidad) {
+
+        if (idEntidad == null) {
+            return null;
+        }
+
+        return solicitudRepositorio
+                .findByMascota_Entidad_IdEntidadOrderByFechaSolicitudDesc(idEntidad);
+    }
+
+    public List<Solicitud> filtrarSolicitudesPorMascota(
+            Long idMascota,
+            String codigo,
+            String estado
+    ) {
+        if (idMascota == null) {
+            return null;
+        }
+
+        Mascota mascota = mascotaServicio.buscarPorId(idMascota);
+
+        if (mascota == null) {
+            return null;
+        }
+
+        String estadoFiltro = normalizarFiltro(estado);
+
+        if (!estadoFiltro.equals("todos")
+                && !estadoFiltro.equals("en_revision")
+                && !estadoFiltro.equals("rechazada")
+                && !estadoFiltro.equals("aprobada")) {
+            return null;
+        }
+
+        return solicitudRepositorio.filtrarSolicitudesPorMascota(
+                idMascota,
+                normalizarFiltro(codigo),
                 estadoFiltro
         );
     }
@@ -187,5 +259,187 @@ public class SolicitudServicio {
                 .orElse(null);
     }
 
+    public List<Solicitud> filtrarSolicitudesPorEntidad(
+            Long idEntidad,
+            String codigo,
+            String estado,
+            String especie
+    ) {
+        if (idEntidad == null) {
+            return null;
+        }
+
+        String codigoFiltro = normalizarFiltro(codigo);
+        String estadoFiltro = normalizarFiltro(estado);
+        String especieFiltro = normalizarFiltro(especie);
+
+        if (!estadoFiltro.equals("todos")
+                && !estadoFiltro.equals("en_revision")
+                && !estadoFiltro.equals("aprobada")
+                && !estadoFiltro.equals("rechazada")) {
+            return null;
+        }
+
+        if (!especieFiltro.equals("todos")
+                && !especieFiltro.equals("perro")
+                && !especieFiltro.equals("gato")) {
+            return null;
+        }
+
+        return solicitudRepositorio.filtrarSolicitudesPorEntidad(
+                idEntidad,
+                codigoFiltro,
+                estadoFiltro,
+                especieFiltro
+        );
+    }
+
+    @Transactional
+    public Solicitud rechazarSolicitud(Long idSolicitud) {
+
+        if (idSolicitud == null) {
+            return null;
+        }
+
+        Solicitud solicitud = solicitudRepositorio
+                .findById(idSolicitud)
+                .orElse(null);
+
+        if (solicitud == null) {
+            return null;
+        }
+
+        //solo se puede gestionar una solicitud que está en revisión
+        if (!"EN_REVISION".equals(solicitud.getEstadoSolicitud())) {
+            return null;
+        }
+
+        solicitud.setEstadoSolicitud("RECHAZADA");
+
+        Solicitud solicitudActualizada =
+                solicitudRepositorio.save(solicitud);
+
+        //notificar al ciudadano solicitante
+        if (solicitud.getCiudadano() != null
+                && solicitud.getCiudadano().getUsuario() != null) {
+
+            Notificacion notificacion = new Notificacion();
+
+            notificacion.setSolicitud(solicitudActualizada);
+            notificacion.setUsuario(
+                    solicitud.getCiudadano().getUsuario()
+            );
+            notificacion.setTitulo("Solicitud rechazada");
+            notificacion.setDescripcion(
+                    "Tu solicitud de adopción para "
+                            + solicitud.getMascota().getNombre()
+                            + " ha sido rechazada."
+            );
+            notificacion.setFechaNotificacion(LocalDateTime.now());
+
+            notificacionServicio.insertar(notificacion);
+        }
+
+        return solicitudActualizada;
+    }
+
+    @Transactional
+    public Solicitud aprobarSolicitud(Long idSolicitud) {
+
+        if (idSolicitud == null) {
+            return null;
+        }
+
+        Solicitud solicitud = solicitudRepositorio
+                .findById(idSolicitud)
+                .orElse(null);
+
+        if (solicitud == null) {
+            return null;
+        }
+
+        //solo se puede gestionar una solicitud que está en revisión
+        if (!"EN_REVISION".equals(solicitud.getEstadoSolicitud())) {
+            return null;
+        }
+
+        Mascota mascota = solicitud.getMascota();
+
+        if (mascota == null) {
+            return null;
+        }
+
+        //aprobar la solicitud seleccionada
+        solicitud.setEstadoSolicitud("APROBADA");
+
+        Solicitud solicitudAprobada =
+                solicitudRepositorio.save(solicitud);
+
+        //buscar las demás solicitudes que siguen en revisión
+        List<Solicitud> solicitudesPendientes =
+                solicitudRepositorio
+                        .findByMascota_IdMascotaAndEstadoSolicitud(
+                                mascota.getIdMascota(),
+                                "EN_REVISION"
+                        );
+
+        for (Solicitud otraSolicitud : solicitudesPendientes) {
+
+            otraSolicitud.setEstadoSolicitud("RECHAZADA");
+
+            Solicitud solicitudRechazada =
+                    solicitudRepositorio.save(otraSolicitud);
+
+            //notificar al ciudadano cuya solicitud fue rechazada automáticamente
+            if (otraSolicitud.getCiudadano() != null
+                    && otraSolicitud.getCiudadano().getUsuario() != null) {
+
+                Notificacion notificacionRechazo = new Notificacion();
+
+                notificacionRechazo.setSolicitud(solicitudRechazada);
+                notificacionRechazo.setUsuario(
+                        otraSolicitud.getCiudadano().getUsuario()
+                );
+                notificacionRechazo.setTitulo("Solicitud rechazada");
+                notificacionRechazo.setDescripcion(
+                        "Tu solicitud de adopción para "
+                                + mascota.getNombre()
+                                + " ha sido rechazada."
+                );
+                notificacionRechazo.setFechaNotificacion(LocalDateTime.now());
+
+                notificacionServicio.insertar(notificacionRechazo);
+            }
+        }
+
+        //la mascota deja de estar disponible para adopción
+        mascotaServicio.cambiarEstado(
+                mascota.getIdMascota(),
+                false
+        );
+
+        //notificar al ciudadano cuya solicitud fue aprobada
+        if (solicitud.getCiudadano() != null
+                && solicitud.getCiudadano().getUsuario() != null) {
+
+            Notificacion notificacion = new Notificacion();
+
+            notificacion.setSolicitud(solicitudAprobada);
+            notificacion.setUsuario(
+                    solicitud.getCiudadano().getUsuario()
+            );
+            notificacion.setTitulo("Solicitud aprobada");
+            notificacion.setDescripcion(
+                    "Tu solicitud de adopción para "
+                            + mascota.getNombre()
+                            + " ha sido aprobada."
+            );
+            notificacion.setFechaNotificacion(LocalDateTime.now());
+
+            notificacionServicio.insertar(notificacion);
+        }
+
+        return solicitudAprobada;
+    }
 
 }
