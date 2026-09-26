@@ -64,4 +64,10 @@ public class MascotaControlador {
         return mascotaServicio.publicarMascota(idEntidad, mascota);
     }
 
+    @PutMapping("/mascota/{idMascota}")
+    public Mascota editarMascota(@PathVariable Long idMascota,
+                                 @RequestBody Mascota mascota) {
+        return mascotaServicio.editarMascota(idMascota, mascota);
+    }
+
 }

@@ -26,9 +26,14 @@ public class SolicitudControlador {
     }
 
     @GetMapping("/solicitud/ciudadano/{idCiudadano}/{idSolicitud}")
-    public Solicitud buscarPorCodigoYCiudadano(@PathVariable Long idCiudadano, @PathVariable Long idSolicitud)
+    public Solicitud buscarPorCodigoYCiudadano(
+            @PathVariable Long idCiudadano,
+            @PathVariable Long idSolicitud)
     {
-        return solicitudServicio.buscarPorCodigoYCiudadano(idCiudadano,idSolicitud);
+        return solicitudServicio.buscarPorCodigoYCiudadano(
+                idSolicitud,
+                idCiudadano
+        );
     }
 
     @GetMapping("/solicitudes/ciudadano/{idCiudadano}/filtrar/{nombreMascota}/{estado}")
@@ -37,6 +42,64 @@ public class SolicitudControlador {
                                               @PathVariable String estado)
     {
         return solicitudServicio.filtrarSolicitudes(idCiudadano,nombreMascota,estado);
+    }
+
+    @GetMapping("/solicitudes/mascota/{idMascota}")
+    public List<Solicitud> listarPorMascota(@PathVariable Long idMascota) {
+        return solicitudServicio.listarPorMascota(idMascota);
+    }
+
+    @GetMapping("/solicitud/mascota/{idMascota}/{idSolicitud}")
+    public Solicitud buscarPorSolicitudYMascota(
+            @PathVariable Long idMascota,
+            @PathVariable Long idSolicitud
+    ) {
+        return solicitudServicio.buscarPorSolicitudYMascota(
+                idSolicitud,
+                idMascota
+        );
+    }
+    @GetMapping("/solicitudes/entidad/{idEntidad}")
+    public List<Solicitud> listarPorEntidad(@PathVariable Long idEntidad) {
+        return solicitudServicio.listarPorEntidad(idEntidad);
+    }
+
+    @GetMapping("/solicitudes/mascota/{idMascota}/filtrar/{codigo}/{estado}")
+    public List<Solicitud> filtrarSolicitudesPorMascota(
+            @PathVariable Long idMascota,
+            @PathVariable String codigo,
+            @PathVariable String estado) {
+
+        return solicitudServicio.filtrarSolicitudesPorMascota(
+                idMascota,
+                codigo,
+                estado
+        );
+    }
+
+    @GetMapping("/solicitudes/entidad/{idEntidad}/filtrar/{codigo}/{estado}/{especie}")
+    public List<Solicitud> filtrarSolicitudesPorEntidad(
+            @PathVariable Long idEntidad,
+            @PathVariable String codigo,
+            @PathVariable String estado,
+            @PathVariable String especie
+    ) {
+        return solicitudServicio.filtrarSolicitudesPorEntidad(
+                idEntidad,
+                codigo,
+                estado,
+                especie
+        );
+    }
+
+    @PutMapping("/solicitud/{idSolicitud}/rechazar")
+    public Solicitud rechazarSolicitud(@PathVariable Long idSolicitud) {
+        return solicitudServicio.rechazarSolicitud(idSolicitud);
+    }
+
+    @PutMapping("/solicitud/{idSolicitud}/aprobar")
+    public Solicitud aprobarSolicitud(@PathVariable Long idSolicitud) {
+        return solicitudServicio.aprobarSolicitud(idSolicitud);
     }
 }
 
