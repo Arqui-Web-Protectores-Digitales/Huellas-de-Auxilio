@@ -1,14 +1,17 @@
 package com.upc.huellasdeauxilio.servicios;
 
+import com.upc.huellasdeauxilio.dtos.MascotaDTO;
 import com.upc.huellasdeauxilio.entidades.Entidad;
 import com.upc.huellasdeauxilio.entidades.Mascota;
 import com.upc.huellasdeauxilio.repositorios.EntidadRepositorio;
 import com.upc.huellasdeauxilio.repositorios.MascotaRepositorio;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -17,19 +20,38 @@ public class MascotaServicio {
     private MascotaRepositorio mascotaRepositorio;
 
     @Autowired
+    private ModelMapper modelMapper;
+
+    @Autowired
     private EntidadRepositorio entidadRepositorio;
 
-    public List<Mascota> listarDisponibles() {
-        return mascotaRepositorio.findByEstadoTrue();
+    public List<MascotaDTO> listarDisponibles() {
+        return mascotaRepositorio.findByEstadoTrue().stream().
+                map(mascota -> modelMapper.map(mascota, MascotaDTO.class)).
+                collect(Collectors.toList());
     }
 
-    public Mascota buscarPorId(Long idMascota)
+    public MascotaDTO buscarPorId(Long idMascota)
     {
-        if(idMascota ==null)
+        if (idMascota == null)
         {
             return null;
         }
-        return mascotaRepositorio.findById(idMascota).orElse(null);
+
+        Mascota mascota = mascotaRepositorio.findById(idMascota).orElse(null);
+
+        if (mascota == null)
+        {
+            return null;
+        }
+
+        MascotaDTO dto = modelMapper.map(mascota, MascotaDTO.class);
+
+        if (mascota.getEntidad() != null) {dto.setEntidadIdEntidad(mascota.getEntidad().getIdEntidad()
+        );
+        }
+
+        return dto;
     }
 
     //esta es una funcion extra para quitar especios extra y transformar
@@ -42,10 +64,7 @@ public class MascotaServicio {
         return valor.trim().toLowerCase(Locale.ROOT);
     }
 
-    public List<Mascota> filtrarMascotas(String nombre,
-                                         String especie,
-                                         String edad,
-                                         String distrito)
+    public List<Mascota> filtrarMascotas(String nombre, String especie, String edad, String distrito)
     {
         return mascotaRepositorio.filtrarMascotas(
                 normalizarFiltro(nombre),
@@ -126,7 +145,13 @@ public class MascotaServicio {
             return null;
         }
 
-        Mascota mascota = buscarPorId(idMascota);
+        if (idMascota == null) {
+            return null;
+        }
+
+        Mascota mascota = mascotaRepositorio
+                .findById(idMascota)
+                .orElse(null);
 
         if (mascota == null) {
             return null;
@@ -146,7 +171,13 @@ public class MascotaServicio {
 
     public Mascota cambiarEstado(Long idMascota, Boolean estado) {
 
-        Mascota mascota = buscarPorId(idMascota);
+        if (idMascota == null) {
+            return null;
+        }
+
+        Mascota mascota = mascotaRepositorio
+                .findById(idMascota)
+                .orElse(null);
 
         if (mascota == null || estado == null) {
             return null;

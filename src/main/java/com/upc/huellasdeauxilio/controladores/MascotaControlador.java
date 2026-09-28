@@ -1,6 +1,7 @@
 package com.upc.huellasdeauxilio.controladores;
 
 
+import com.upc.huellasdeauxilio.dtos.MascotaDTO;
 import com.upc.huellasdeauxilio.entidades.Mascota;
 import com.upc.huellasdeauxilio.servicios.MascotaServicio;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +17,15 @@ public class MascotaControlador {
     private MascotaServicio mascotaServicio;
 
     @GetMapping("/mascotas")
-    public List<Mascota> listarMascotasDisponibles()
+    public List<MascotaDTO> listarMascotasDisponibles()
     {
         return mascotaServicio.listarDisponibles();
     }
 
     @GetMapping("/mascota/{idMascota}")
-    public Mascota buscarPorId(@PathVariable Long idMascota)
-    {
+    public MascotaDTO buscarPorId(
+            @PathVariable("idMascota") Long idMascota
+    ) {
         return mascotaServicio.buscarPorId(idMascota);
     }
 
