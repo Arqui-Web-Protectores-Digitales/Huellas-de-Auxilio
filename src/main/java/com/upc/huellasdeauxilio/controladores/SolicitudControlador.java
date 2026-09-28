@@ -1,5 +1,6 @@
 package com.upc.huellasdeauxilio.controladores;
 
+import com.upc.huellasdeauxilio.dtos.SolicitudDTO;
 import com.upc.huellasdeauxilio.entidades.Solicitud;
 import com.upc.huellasdeauxilio.servicios.SolicitudServicio;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,19 +15,19 @@ public class SolicitudControlador {
     private SolicitudServicio solicitudServicio;
 
     @PostMapping("/solicitud/ciudadano/{idCiudadano}")
-    public Solicitud insertar(@PathVariable Long idCiudadano, @RequestBody Solicitud solicitud)
+    public SolicitudDTO insertar(@PathVariable Long idCiudadano, @RequestBody SolicitudDTO solicitudDTO)
     {
-        return solicitudServicio.insertar(idCiudadano,solicitud);
+        return solicitudServicio.insertar(idCiudadano, solicitudDTO);
     }
 
     @GetMapping("/solicitudes/ciudadano/{idCiudadano}")
-    public List<Solicitud> listarPorCiudadano(@PathVariable Long idCiudadano)
+    public List<SolicitudDTO> listarPorCiudadano(@PathVariable Long idCiudadano)
     {
         return solicitudServicio.listarPorCiudadano(idCiudadano);
     }
 
     @GetMapping("/solicitud/ciudadano/{idCiudadano}/{idSolicitud}")
-    public Solicitud buscarPorCodigoYCiudadano(
+    public SolicitudDTO buscarPorCodigoYCiudadano(
             @PathVariable Long idCiudadano,
             @PathVariable Long idSolicitud)
     {
@@ -37,7 +38,7 @@ public class SolicitudControlador {
     }
 
     @GetMapping("/solicitudes/ciudadano/{idCiudadano}/filtrar/{nombreMascota}/{estado}")
-    public List<Solicitud> filtrarSolicitudes(@PathVariable Long idCiudadano,
+    public List<SolicitudDTO> filtrarSolicitudes(@PathVariable Long idCiudadano,
                                               @PathVariable String nombreMascota,
                                               @PathVariable String estado)
     {
@@ -45,12 +46,12 @@ public class SolicitudControlador {
     }
 
     @GetMapping("/solicitudes/mascota/{idMascota}")
-    public List<Solicitud> listarPorMascota(@PathVariable Long idMascota) {
+    public List<SolicitudDTO> listarPorMascota(@PathVariable Long idMascota) {
         return solicitudServicio.listarPorMascota(idMascota);
     }
 
     @GetMapping("/solicitud/mascota/{idMascota}/{idSolicitud}")
-    public Solicitud buscarPorSolicitudYMascota(
+    public SolicitudDTO buscarPorSolicitudYMascota(
             @PathVariable Long idMascota,
             @PathVariable Long idSolicitud
     ) {
@@ -65,7 +66,7 @@ public class SolicitudControlador {
     }
 
     @GetMapping("/solicitudes/mascota/{idMascota}/filtrar/{codigo}/{estado}")
-    public List<Solicitud> filtrarSolicitudesPorMascota(
+    public List<SolicitudDTO> filtrarSolicitudesPorMascota(
             @PathVariable Long idMascota,
             @PathVariable String codigo,
             @PathVariable String estado) {

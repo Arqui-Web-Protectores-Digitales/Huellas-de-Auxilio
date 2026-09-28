@@ -1,11 +1,14 @@
 package com.upc.huellasdeauxilio.servicios;
 
+import com.upc.huellasdeauxilio.dtos.SolicitudDTO;
 import com.upc.huellasdeauxilio.entidades.Ciudadano;
 import com.upc.huellasdeauxilio.entidades.Mascota;
 import com.upc.huellasdeauxilio.entidades.Notificacion;
 import com.upc.huellasdeauxilio.entidades.Solicitud;
 import com.upc.huellasdeauxilio.repositorios.CiudadanoRepositorio;
+import com.upc.huellasdeauxilio.repositorios.MascotaRepositorio;
 import com.upc.huellasdeauxilio.repositorios.SolicitudRepositorio;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @Service
 public class SolicitudServicio {
@@ -28,35 +32,37 @@ public class SolicitudServicio {
     @Autowired
     private NotificacionServicio notificacionServicio;
 
+    @Autowired
+    private ModelMapper modelMapper;
+    @Autowired
+    private MascotaRepositorio mascotaRepositorio;
+
     @Transactional
-    public Solicitud insertar(
-            Long idCiudadano,
-            Solicitud datos
-    ) {
-        // Validar los campos obligatorios.
-        if (datos == null
-                || datos.getMascota() == null
-                || datos.getMascota().getIdMascota() == null
-                || datos.getTipoVivienda() == null
-                || datos.getTipoVivienda().isBlank()
-                || datos.getMotivo() == null
-                || datos.getMotivo().isBlank()
-                || datos.getExperiencia() == null) {
+    public SolicitudDTO insertar(Long idCiudadano, SolicitudDTO solicitudDTO)
+    {
+        if (idCiudadano == null
+                || solicitudDTO == null
+                || solicitudDTO.getMascotaIdMascota() == null
+                || solicitudDTO.getTipoVivienda() == null
+                || solicitudDTO.getTipoVivienda().isBlank()
+                || solicitudDTO.getMotivo() == null
+                || solicitudDTO.getMotivo().isBlank()
+                || solicitudDTO.getExperiencia() == null) {
 
             return null;
         }
 
-        //aqui se valida que el ciudadano exista y tenga un usuario
-        Ciudadano ciudadano = buscarCiudadano(idCiudadano);
+        Ciudadano ciudadano = ciudadanoRepositorio
+                .findById(idCiudadano)
+                .orElse(null);
 
         if (ciudadano == null || ciudadano.getUsuario() == null) {
             return null;
         }
 
-        //validar que la mascota exista y esté disponible
-        Mascota mascota = mascotaServicio.buscarPorId(
-                datos.getMascota().getIdMascota()
-        );
+        Mascota mascota = mascotaRepositorio
+                .findById(solicitudDTO.getMascotaIdMascota())
+                .orElse(null);
 
         if (mascota == null
                 || !Boolean.TRUE.equals(mascota.getEstado())) {
@@ -64,20 +70,28 @@ public class SolicitudServicio {
             return null;
         }
 
-        Solicitud solicitud = new Solicitud();
+        // Convertir DTO a entidad.
+        Solicitud solicitud = modelMapper.map(
+                solicitudDTO,
+                Solicitud.class
+        );
 
+        // No aceptar estos valores desde el cliente.
+        solicitud.setIdSolicitud(null);
         solicitud.setCiudadano(ciudadano);
         solicitud.setMascota(mascota);
-        solicitud.setTipoVivienda(datos.getTipoVivienda().trim());
-        solicitud.setMotivo(datos.getMotivo().trim());
-        solicitud.setExperiencia(datos.getExperiencia());
         solicitud.setFechaSolicitud(LocalDateTime.now());
-        solicitud.setEstadoSolicitud("EN_REVISION");
+        solicitud.setEstadoSolicitud("ENVIADA");
+
+        solicitud.setTipoVivienda(
+                solicitudDTO.getTipoVivienda().trim()
+        );
+        solicitud.setMotivo(solicitudDTO.getMotivo().trim());
+        solicitud.setExperiencia(solicitudDTO.getExperiencia());
 
         Solicitud solicitudGuardada =
                 solicitudRepositorio.save(solicitud);
 
-        // Crear la notificación para el ciudadano.
         Notificacion notiCiudadano = new Notificacion();
 
         notiCiudadano.setSolicitud(solicitudGuardada);
@@ -92,45 +106,63 @@ public class SolicitudServicio {
 
         notificacionServicio.insertar(notiCiudadano);
 
-        if (mascota.getEntidad() != null) {
-            Notificacion notiEntidad = new Notificacion();
-            notiEntidad.setSolicitud(solicitudGuardada);
-            notiEntidad.setUsuario(mascota.getEntidad().getUsuario());
-            notiEntidad.setTitulo("Nueva Solicitud de Adopción");
-            notiEntidad.setDescripcion("Tienes una nueva solicitud de adopción para la mascota: " + mascota.getNombre());
-            notiEntidad.setFechaNotificacion(LocalDateTime.now());
-            notificacionServicio.insertar(notiEntidad);
-        }
+        // Convertir la entidad guardada a DTO.
+        SolicitudDTO respuesta = modelMapper.map(
+                solicitudGuardada,
+                SolicitudDTO.class
+        );
 
-        return solicitudGuardada;
+        respuesta.setMascotaIdMascota(mascota.getIdMascota());
+        respuesta.setCiudadanoIdCiudadano(
+                ciudadano.getIdCiudadano()
+        );
+
+        return respuesta;
     }
 
-    public List<Solicitud> listarPorCiudadano(Long idCiudadano) {
-        Ciudadano ciudadano = buscarCiudadano(idCiudadano);
+    public List<SolicitudDTO> listarPorCiudadano(Long idCiudadano)
+    {
+
+        if (idCiudadano == null) {
+            return null;
+        }
+
+        Ciudadano ciudadano = ciudadanoRepositorio
+                .findById(idCiudadano)
+                .orElse(null);
 
         if (ciudadano == null) {
             return null;
         }
 
         return solicitudRepositorio
-                .findByCiudadano_IdCiudadanoOrderByFechaSolicitudDesc(
-                        idCiudadano
-                );
+                .findByCiudadano_IdCiudadanoOrderByFechaSolicitudDesc(idCiudadano).stream()
+                .map(solicitud ->
+                {SolicitudDTO dto = modelMapper.map(solicitud, SolicitudDTO.class);
+                    dto.setMascotaIdMascota(solicitud.getMascota().getIdMascota());
+                    dto.setCiudadanoIdCiudadano(solicitud.getCiudadano().getIdCiudadano());
+                    return dto;
+                }).collect(Collectors.toList());
     }
 
-    public Solicitud buscarPorCodigoYCiudadano(
-            Long idSolicitud,
-            Long idCiudadano
-    ) {
-        if (idSolicitud == null || idCiudadano == null) {
+    public SolicitudDTO buscarPorCodigoYCiudadano(Long idSolicitud, Long idCiudadano)
+    {
+        if (idSolicitud == null || idCiudadano == null)
+        {
             return null;
         }
 
-        return solicitudRepositorio
-                .findByIdSolicitudAndCiudadano_IdCiudadano(
-                        idSolicitud,
-                        idCiudadano
-                );
+        Solicitud solicitud = solicitudRepositorio.findByIdSolicitudAndCiudadano_IdCiudadano(idSolicitud, idCiudadano);
+
+        if (solicitud == null)
+        {
+            return null;
+        }
+
+        SolicitudDTO dto = modelMapper.map(solicitud, SolicitudDTO.class);
+        dto.setMascotaIdMascota(solicitud.getMascota().getIdMascota());
+        dto.setCiudadanoIdCiudadano(solicitud.getCiudadano().getIdCiudadano());
+        return dto;
     }
 
     //esta es una funcion extra para quitar especios extra y transformar
@@ -143,21 +175,19 @@ public class SolicitudServicio {
         return valor.trim().toLowerCase(Locale.ROOT);
     }
 
-    public List<Solicitud> filtrarSolicitudes(
-            Long idCiudadano,
-            String nombreMascota,
-            String estado
-    ) {
+    public List<SolicitudDTO> filtrarSolicitudes(Long idCiudadano, String nombreMascota, String estado)
+    {
         Ciudadano ciudadano = buscarCiudadano(idCiudadano);
 
-        if (ciudadano == null) {
+        if (ciudadano == null)
+        {
             return null;
         }
-
 
         String estadoFiltro = normalizarFiltro(estado);
 
         if (!estadoFiltro.equals("todos")
+                && !estadoFiltro.equals("enviada")
                 && !estadoFiltro.equals("en_revision")
                 && !estadoFiltro.equals("aprobada")
                 && !estadoFiltro.equals("rechazada")) {
@@ -165,47 +195,60 @@ public class SolicitudServicio {
             return null;
         }
 
-        return solicitudRepositorio.filtrarSolicitudes(
-                idCiudadano,
-                normalizarFiltro(nombreMascota),
-                estadoFiltro
-        );
-    }
-    public List<Solicitud> listarPorMascota(Long idMascota) {
+        return solicitudRepositorio.filtrarSolicitudes(idCiudadano, normalizarFiltro(nombreMascota), estadoFiltro)
+                .stream()
+                .map(solicitud ->
+                {
+                    SolicitudDTO dto = modelMapper.map(solicitud, SolicitudDTO.class);
+                    dto.setMascotaIdMascota(solicitud.getMascota().getIdMascota());
+                    dto.setCiudadanoIdCiudadano(solicitud.getCiudadano().getIdCiudadano());
+                    return dto;
+                }).collect(Collectors.toList());
 
+    }
+
+    public List<SolicitudDTO> listarPorMascota(Long idMascota) {
         if (idMascota == null) {
             return null;
         }
+        Mascota mascota = mascotaRepositorio.findById(idMascota).orElse(null);
 
-        Mascota mascota = mascotaServicio.buscarPorId(idMascota);
-
-        if (mascota == null) {
+        if (mascota == null)
+        {
             return null;
         }
 
-        return solicitudRepositorio
-                .findByMascota_IdMascotaOrderByFechaSolicitudDesc(idMascota);
+        return solicitudRepositorio.findByMascota_IdMascotaOrderByFechaSolicitudDesc(idMascota).stream()
+                .map(solicitud -> {SolicitudDTO dto = modelMapper.map(solicitud, SolicitudDTO.class);
+                    dto.setMascotaIdMascota(solicitud.getMascota().getIdMascota());
+                    dto.setCiudadanoIdCiudadano(solicitud.getCiudadano().getIdCiudadano());
+                    return dto;}).collect(Collectors.toList());
     }
 
-    public Solicitud buscarPorSolicitudYMascota(
-            Long idSolicitud,
-            Long idMascota
-    ) {
-        if (idSolicitud == null || idMascota == null) {
+    public SolicitudDTO buscarPorSolicitudYMascota(Long idSolicitud, Long idMascota) {
+        if (idSolicitud == null || idMascota == null)
+        {
             return null;
         }
 
-        Mascota mascota = mascotaServicio.buscarPorId(idMascota);
+        Mascota mascota = mascotaRepositorio.findById(idMascota).orElse(null);
 
-        if (mascota == null) {
+        if (mascota == null)
+        {
             return null;
         }
 
-        return solicitudRepositorio
-                .findByIdSolicitudAndMascota_IdMascota(
-                        idSolicitud,
-                        idMascota
-                );
+        Solicitud solicitud = solicitudRepositorio.findByIdSolicitudAndMascota_IdMascota(idSolicitud, idMascota);
+
+        if (solicitud == null)
+        {
+            return null;
+        }
+
+        SolicitudDTO dto = modelMapper.map(solicitud, SolicitudDTO.class);
+        dto.setMascotaIdMascota(solicitud.getMascota().getIdMascota());
+        dto.setCiudadanoIdCiudadano(solicitud.getCiudadano().getIdCiudadano());
+        return dto;
     }
 
     public List<Solicitud> listarPorEntidad(Long idEntidad) {
@@ -218,16 +261,14 @@ public class SolicitudServicio {
                 .findByMascota_Entidad_IdEntidadOrderByFechaSolicitudDesc(idEntidad);
     }
 
-    public List<Solicitud> filtrarSolicitudesPorMascota(
-            Long idMascota,
-            String codigo,
-            String estado
-    ) {
+    public List<SolicitudDTO> filtrarSolicitudesPorMascota(Long idMascota, String codigo, String estado) {
         if (idMascota == null) {
             return null;
         }
 
-        Mascota mascota = mascotaServicio.buscarPorId(idMascota);
+        Mascota mascota = mascotaRepositorio
+                .findById(idMascota)
+                .orElse(null);
 
         if (mascota == null) {
             return null;
@@ -242,11 +283,11 @@ public class SolicitudServicio {
             return null;
         }
 
-        return solicitudRepositorio.filtrarSolicitudesPorMascota(
-                idMascota,
-                normalizarFiltro(codigo),
-                estadoFiltro
-        );
+        return solicitudRepositorio.filtrarSolicitudesPorMascota(idMascota, normalizarFiltro(codigo), estadoFiltro).stream()
+                .map(solicitud -> {SolicitudDTO dto = modelMapper.map(solicitud, SolicitudDTO.class);
+                    dto.setMascotaIdMascota(solicitud.getMascota().getIdMascota());dto.setCiudadanoIdCiudadano(solicitud.getCiudadano().getIdCiudadano());
+                    return dto;
+                }).collect(Collectors.toList());
     }
 
     private Ciudadano buscarCiudadano(Long idCiudadano) {
@@ -442,4 +483,24 @@ public class SolicitudServicio {
         return solicitudAprobada;
     }
 
+    private SolicitudDTO convertirADTO(Solicitud solicitud) {
+        SolicitudDTO dto = modelMapper.map(
+                solicitud,
+                SolicitudDTO.class
+        );
+
+        if (solicitud.getMascota() != null) {
+            dto.setMascotaIdMascota(
+                    solicitud.getMascota().getIdMascota()
+            );
+        }
+
+        if (solicitud.getCiudadano() != null) {
+            dto.setCiudadanoIdCiudadano(
+                    solicitud.getCiudadano().getIdCiudadano()
+            );
+        }
+
+        return dto;
+    }
 }
