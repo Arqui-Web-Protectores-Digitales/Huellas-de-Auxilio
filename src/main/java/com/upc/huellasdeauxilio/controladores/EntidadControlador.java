@@ -1,13 +1,15 @@
 package com.upc.huellasdeauxilio.controladores;
 
+import com.upc.huellasdeauxilio.dtos.EntidadDTO;
 import com.upc.huellasdeauxilio.entidades.Entidad;
 import com.upc.huellasdeauxilio.servicios.EntidadServicio;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Time;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -16,59 +18,81 @@ public class EntidadControlador {
     @Autowired
     private EntidadServicio entidadServicio;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     @PostMapping("/entidad")
-    public Entidad insertar(@RequestBody Entidad entidad) {
-        return entidadServicio.insertar(entidad);
+    public EntidadDTO insertar(@RequestBody EntidadDTO entidadDTO) {
+        Entidad entidad = modelMapper.map(entidadDTO, Entidad.class);
+        entidad = entidadServicio.insertar(entidad);
+        return modelMapper.map(entidad, EntidadDTO.class);
     }
 
     @GetMapping("/entidad/usuario/{idUsuario}")
-    public Entidad buscarPorUsuario(@PathVariable Long idUsuario) {
-        return entidadServicio.buscarPorUsuario(idUsuario);
+    public EntidadDTO buscarPorUsuario(@PathVariable Long idUsuario) {
+        Entidad entidad = entidadServicio.buscarPorUsuario(idUsuario);
+        return (entidad != null) ? modelMapper.map(entidad, EntidadDTO.class) : null;
     }
 
     @GetMapping("/entidades/zona/{zonaAtencion}")
-    public List<Entidad> buscarPorZonaAtencion(@PathVariable String zonaAtencion) {
-        return entidadServicio.buscarPorZonaAtencion(zonaAtencion);
+    public List<EntidadDTO> buscarPorZonaAtencion(@PathVariable String zonaAtencion) {
+        List<Entidad> entidades = entidadServicio.buscarPorZonaAtencion(zonaAtencion);
+        return entidades.stream()
+                .map(e -> modelMapper.map(e, EntidadDTO.class))
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/entidades")
-    public List<Entidad> listarTodas() {
-        return entidadServicio.listarTodas();
+    public List<EntidadDTO> listarTodas() {
+        List<Entidad> entidades = entidadServicio.listarTodas();
+        return entidades.stream()
+                .map(e -> modelMapper.map(e, EntidadDTO.class))
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/entidad/detalle/{idEntidad}")
-    public Entidad buscarPorId(@PathVariable Long idEntidad) {
-        return entidadServicio.buscarPorId(idEntidad);
+    public EntidadDTO buscarPorId(@PathVariable Long idEntidad) {
+        Entidad entidad = entidadServicio.buscarPorId(idEntidad);
+        return (entidad != null) ? modelMapper.map(entidad, EntidadDTO.class) : null;
     }
 
     @GetMapping("/entidades/nombre/{nombre}")
-    public List<Entidad> buscarPorNombre(@PathVariable String nombre) {
-        return entidadServicio.buscarPorNombre(nombre);
+    public List<EntidadDTO> buscarPorNombre(@PathVariable String nombre) {
+        List<Entidad> entidades = entidadServicio.buscarPorNombre(nombre);
+        return entidades.stream()
+                .map(e -> modelMapper.map(e, EntidadDTO.class))
+                .collect(Collectors.toList());
     }
 
-    //Modificar una entidad ya existente
     @PutMapping("/entidades/{Id}")
-    public Entidad modificarEntidad(
+    public EntidadDTO modificarEntidad(
             @PathVariable Long Id,
-            @RequestBody Entidad entidad) {
+            @RequestBody EntidadDTO entidadDTO) {
 
-        return entidadServicio.modificarEntidad(
+        Entidad entidadActualizada = entidadServicio.modificarEntidad(
                 Id,
-                entidad.getNombreEntidad(),
-                entidad.getTipoEntidad(),
-                entidad.getZonaAtencion(),
-                entidad.getSitioWeb(),
-                entidad.getFechaAtencionInicio(),
-                entidad.getFechaAtencionFinal(),
-                entidad.getDiasAtencion(),
-                entidad.getLatitud(),
-                entidad.getLongitud()
+                entidadDTO.getNombreEntidad(),
+                entidadDTO.getTipoEntidad(),
+                entidadDTO.getZonaAtencion(),
+                entidadDTO.getSitioWeb(),
+                entidadDTO.getFechaAtencionInicio(),
+                entidadDTO.getFechaAtencionFinal(),
+                entidadDTO.getDiasAtencion(),
+                entidadDTO.getLatitud(),
+                entidadDTO.getLongitud()
         );
+        return (entidadActualizada != null) ? modelMapper.map(entidadActualizada, EntidadDTO.class) : null;
     }
-    //Modificar la contraseña de un usuario perteneciente a una ENTIDAD EXISTENTE
+
     @PutMapping("/entidades/{Id}/contraseñanueva")
     public void modificarContraseñaEntidad(@PathVariable Long Id, @RequestBody String contraseñanueva){
         entidadServicio.modificarContraseñaEntidad(Id, contraseñanueva);
+    }
+
+    @GetMapping ("/entidades/{Id}")
+    public EntidadDTO buscarEntidadPorId(@PathVariable Long Id){
+        Entidad entidad = entidadServicio.buscarEntidadPorId(Id);
+        return (entidad != null) ? modelMapper.map(entidad, EntidadDTO.class) : null;
     }
 
 }

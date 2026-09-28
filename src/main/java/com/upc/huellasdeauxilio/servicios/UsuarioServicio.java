@@ -36,15 +36,15 @@ public class UsuarioServicio {
     }
 
     //ELIMINADO LOGICO DE USUARIO
-    public String eliminadoLogico(String correo, String contraseña) {
+    public Usuario eliminadoLogico(String correo, String contraseña, Long Id) {
 
-        Usuario usuario = usuarioRepositorio.findByCorreoAndContraseña(correo, contraseña);
-        if (usuario != null) {
+        Usuario usuario = usuarioRepositorio.findById(Id).orElse(null);
+        if (usuario != null && usuario.getCorreo().equals(correo) && usuario.getContraseña().equals(contraseña) ) {
             usuario.setEstadoUsuario(false);
             usuarioRepositorio.save(usuario);
-            return "Usuario encontrado";
+            return usuario;
         } else {
-            return "Usuario no encontrado";
+            return null;
         }
     }
 

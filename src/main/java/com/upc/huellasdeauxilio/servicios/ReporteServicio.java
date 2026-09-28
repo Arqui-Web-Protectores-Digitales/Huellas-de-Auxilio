@@ -140,6 +140,6 @@ public class ReporteServicio {
     //Buscar Por Id cuando una entidad requiera de visualizar una entidads
     public Reporte buscarPorId(Long Id){
 
-        return reporteRepositorio.findByIdReporte(Id);
+        return reporteRepositorio.findById(Id).orElse(null);
     }
 }
