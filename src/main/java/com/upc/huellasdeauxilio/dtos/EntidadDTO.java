@@ -12,6 +12,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EntidadDTO {
+
     private Long idEntidad;
     private String nombreEntidad;
     private String tipoEntidad;
@@ -23,5 +24,5 @@ public class EntidadDTO {
     private Float latitud;
     private Float longitud;
 
-    private Long usuarioIdUsuario;
+    private Long idUsuario;
 }

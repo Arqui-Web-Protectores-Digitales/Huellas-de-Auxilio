@@ -14,8 +14,12 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idUsuario;
 
+    @ManyToOne
+    @JoinColumn(name = "id_rol")
+    private Rol rol;
+
     private String correo;
     private String telefono;
     private String contraseña;
-    private Boolean estadoUsuario=true;
+    private Boolean estadoUsuario = true;
 }
