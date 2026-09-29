@@ -9,12 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CiudadanoDTO {
+public class RolDTO {
 
-    private Long idCiudadano;
-    private String dni;
-    private String distrito;
-    private String nombreCompleto;
-
-    private Long usuarioIdUsuario;
+    private Long idRol;
+    private String tipoRol;
 }
