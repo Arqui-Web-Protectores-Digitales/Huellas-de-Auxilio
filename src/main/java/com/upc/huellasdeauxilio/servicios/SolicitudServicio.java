@@ -81,7 +81,7 @@ public class SolicitudServicio {
         solicitud.setCiudadano(ciudadano);
         solicitud.setMascota(mascota);
         solicitud.setFechaSolicitud(LocalDateTime.now());
-        solicitud.setEstadoSolicitud("ENVIADA");
+        solicitud.setEstadoSolicitud("EN_REVISION");
 
         solicitud.setTipoVivienda(
                 solicitudDTO.getTipoVivienda().trim()
@@ -187,7 +187,6 @@ public class SolicitudServicio {
         String estadoFiltro = normalizarFiltro(estado);
 
         if (!estadoFiltro.equals("todos")
-                && !estadoFiltro.equals("enviada")
                 && !estadoFiltro.equals("en_revision")
                 && !estadoFiltro.equals("aprobada")
                 && !estadoFiltro.equals("rechazada")) {
