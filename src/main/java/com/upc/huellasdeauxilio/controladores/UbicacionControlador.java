@@ -1,7 +1,9 @@
 package com.upc.huellasdeauxilio.controladores;
 
+import com.upc.huellasdeauxilio.dtos.UbicacionDTO;
 import com.upc.huellasdeauxilio.entidades.Ubicacion;
 import com.upc.huellasdeauxilio.servicios.UbicacionServicio;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,8 +14,25 @@ public class UbicacionControlador {
     @Autowired
     private UbicacionServicio ubicacionServicio;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     @PostMapping("/ubicacion")
-    public Ubicacion insertar(@RequestBody Ubicacion ubicacion) {
-        return ubicacionServicio.insertar(ubicacion);
+    public UbicacionDTO insertar(
+            @RequestBody UbicacionDTO ubicacionDTO) {
+
+        Ubicacion ubicacion =
+                modelMapper.map(
+                        ubicacionDTO,
+                        Ubicacion.class
+                );
+
+        ubicacion =
+                ubicacionServicio.insertar(ubicacion);
+
+        return modelMapper.map(
+                ubicacion,
+                UbicacionDTO.class
+        );
     }
 }

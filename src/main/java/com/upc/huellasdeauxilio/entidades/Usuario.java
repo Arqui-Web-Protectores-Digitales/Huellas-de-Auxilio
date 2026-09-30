@@ -1,10 +1,7 @@
 package com.upc.huellasdeauxilio.entidades;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Setter
@@ -17,8 +14,12 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idUsuario;
 
+    @ManyToOne
+    @JoinColumn(name = "id_rol")
+    private Rol rol;
+
     private String correo;
     private String telefono;
     private String contraseña;
-    private Boolean estadoUsuario;
+    private Boolean estadoUsuario = true;
 }

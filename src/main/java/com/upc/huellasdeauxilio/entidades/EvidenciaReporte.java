@@ -21,5 +21,5 @@ public class EvidenciaReporte {
     @JoinColumn(name = "id_reporte")
     private Reporte reporte;
 
-    private byte[] evidencia;
+    private String urlEvidencia;
 }

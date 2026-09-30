@@ -7,19 +7,28 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TipoEntidad {
-
+public class Mascota {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idTipo;
-
-    private String tipoEntidad;
+    private Long idMascota;
 
     @ManyToOne
-    @JoinColumn(name = "id_entidad")
+    @JoinColumn(name ="id_entidad")
     private Entidad entidad;
+
+    private String nombre;
+    private String edad;
+    private String sexo;
+    private String distrito;
+    private String tamaño;
+    private Boolean estado;
+    private String especie;
+    private String urlFoto;
+    private String descripcion;
+
+
 }

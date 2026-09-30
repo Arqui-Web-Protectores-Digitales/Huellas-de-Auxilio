@@ -11,15 +11,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Ubicacion {
+public class Rol {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idUbicacion;
+    private Long idRol;
 
-    private String direccion;
-    private String distrito;
-    private String referencia;
-    private Float latitud;
-    private Float longitud;
+    private String tipoRol;
 }

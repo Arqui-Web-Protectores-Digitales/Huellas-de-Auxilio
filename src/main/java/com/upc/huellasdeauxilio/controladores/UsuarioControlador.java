@@ -1,9 +1,14 @@
 package com.upc.huellasdeauxilio.controladores;
 
+import com.upc.huellasdeauxilio.dtos.UsuarioDTO;
+import com.upc.huellasdeauxilio.entidades.Rol;
 import com.upc.huellasdeauxilio.entidades.Usuario;
 import com.upc.huellasdeauxilio.servicios.UsuarioServicio;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -12,28 +17,137 @@ public class UsuarioControlador {
     @Autowired
     private UsuarioServicio usuarioServicio;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
+    private Usuario convertirAEntidad(UsuarioDTO dto) {
+
+        Usuario usuario =
+                modelMapper.map(dto, Usuario.class);
+
+        if (dto.getIdRol() != null) {
+
+            Rol rol = new Rol();
+            rol.setIdRol(dto.getIdRol());
+
+            usuario.setRol(rol);
+        }
+
+        return usuario;
+    }
+
+    private UsuarioDTO convertirADTO(Usuario usuario) {
+
+        if (usuario == null) {
+            return null;
+        }
+
+        UsuarioDTO dto =
+                modelMapper.map(usuario, UsuarioDTO.class);
+
+        if (usuario.getRol() != null) {
+
+            dto.setIdRol(
+                    usuario.getRol().getIdRol()
+            );
+        }
+
+        return dto;
+    }
+
+    // HU01 / HU02
     @PostMapping("/usuario")
-    public Usuario insertar(@RequestBody Usuario usuario) {
-        return usuarioServicio.insertar(usuario);
+    public UsuarioDTO insertar(
+            @RequestBody UsuarioDTO usuarioDTO) {
+
+        Usuario usuario =
+                convertirAEntidad(usuarioDTO);
+
+        usuario =
+                usuarioServicio.insertar(usuario);
+
+        return convertirADTO(usuario);
     }
 
+    // HU01 / HU02 / HU04
     @GetMapping("/usuario/correo/{correo}")
-    public Usuario buscarPorCorreo(@PathVariable String correo) {
-        return usuarioServicio.buscarPorCorreo(correo);
+    public UsuarioDTO buscarPorCorreo(
+            @PathVariable String correo) {
+
+        Usuario usuario =
+                usuarioServicio.buscarPorCorreo(correo);
+
+        return convertirADTO(usuario);
     }
 
-    @GetMapping("/usuario/login/{correo}/{contraseña}")
-    public Usuario iniciarSesion(@PathVariable String correo,
-                                 @PathVariable String contraseña) {
-        return usuarioServicio.iniciarSesion(correo, contraseña);
+    // HU03
+    @PostMapping("/usuario/login")
+    public UsuarioDTO iniciarSesion(
+            @RequestBody UsuarioDTO usuarioDTO) {
+
+        Usuario usuario =
+                usuarioServicio.iniciarSesion(
+                        usuarioDTO.getCorreo(),
+                        usuarioDTO.getContraseña()
+                );
+
+        return convertirADTO(usuario);
     }
 
+    // HU04
     @PutMapping("/usuario/contrasena/{correo}")
-    public Usuario cambiarContrasena(@PathVariable String correo,
-                                     @RequestBody Usuario usuario) {
-        return usuarioServicio.cambiarContrasena(
-                correo,
-                usuario.getContraseña()
-        );
+    public UsuarioDTO cambiarContrasena(
+            @PathVariable String correo,
+            @RequestBody UsuarioDTO usuarioDTO) {
+
+        Usuario usuario =
+                usuarioServicio.cambiarContrasena(
+                        correo,
+                        usuarioDTO.getContraseña()
+                );
+
+        return convertirADTO(usuario);
+    }
+
+    // HU22 - ya existía en el proyecto
+    @PutMapping("/usuario/usuario/{id}")
+    public UsuarioDTO eliminadoLogico(
+            @RequestBody UsuarioDTO usuarioDTO,
+            @PathVariable Long id) {
+
+        Usuario usuario =
+                usuarioServicio.eliminadoLogico(
+                        usuarioDTO.getCorreo(),
+                        usuarioDTO.getContraseña(),
+                        id
+                );
+
+        return convertirADTO(usuario);
+    }
+
+    // HU21 / HU24 - ya existía
+    @PutMapping("/usuario/perfil/contrasena/{correo}")
+    public String cambiarContrasenaDesdePerfil(
+            @PathVariable String correo,
+            @RequestBody Map<String, String> datos) {
+
+        if (datos == null) {
+            return "Completa los datos para cambiar la contraseña.";
+        }
+
+        Usuario actualizado =
+                usuarioServicio.cambiarContrasenaDesdePerfil(
+                        correo,
+                        datos.get("contrasenaActual"),
+                        datos.get("nuevaContrasena"),
+                        datos.get("confirmarContrasena")
+                );
+
+        if (actualizado == null) {
+            return "No se pudo cambiar la contraseña. "
+                    + "Verifica los datos ingresados.";
+        }
+
+        return "Contraseña actualizada correctamente";
     }
 }

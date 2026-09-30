@@ -1,22 +1,16 @@
-package com.upc.huellasdeauxilio.entidades;
+package com.upc.huellasdeauxilio.dtos;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Ubicacion {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class UbicacionDTO {
     private Long idUbicacion;
-
     private String direccion;
     private String distrito;
     private String referencia;

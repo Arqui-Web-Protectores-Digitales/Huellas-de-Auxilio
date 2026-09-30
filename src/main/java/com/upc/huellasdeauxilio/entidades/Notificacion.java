@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -22,10 +24,16 @@ public class Notificacion {
     private Reporte reporte;
 
     @ManyToOne
+    @JoinColumn(name = "id_solicitud")
+    private Solicitud solicitud;
+
+    @ManyToOne
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 
     private String descripcion;
     private Boolean estadoNotificacion;
     private String titulo;
+
+    private LocalDateTime fechaNotificacion;
 }
