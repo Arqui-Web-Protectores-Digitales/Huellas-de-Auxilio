@@ -24,12 +24,12 @@ public class CiudadanoControlador {
         Ciudadano ciudadano =
                 modelMapper.map(dto, Ciudadano.class);
 
-        if (dto.getUsuarioIdUsuario() != null) {
+        if (dto.getIdUsuario() != null) {
 
             Usuario usuario = new Usuario();
 
             usuario.setIdUsuario(
-                    dto.getUsuarioIdUsuario()
+                    dto.getIdUsuario()
             );
 
             ciudadano.setUsuario(usuario);
@@ -53,7 +53,7 @@ public class CiudadanoControlador {
 
         if (ciudadano.getUsuario() != null) {
 
-            dto.setUsuarioIdUsuario(
+            dto.setIdUsuario(
                     ciudadano
                             .getUsuario()
                             .getIdUsuario()
