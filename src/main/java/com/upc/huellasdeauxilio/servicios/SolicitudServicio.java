@@ -250,14 +250,17 @@ public class SolicitudServicio {
         return dto;
     }
 
-    public List<Solicitud> listarPorEntidad(Long idEntidad) {
+    public List<SolicitudDTO> listarPorEntidad(Long idEntidad) {
 
         if (idEntidad == null) {
             return null;
         }
 
         return solicitudRepositorio
-                .findByMascota_Entidad_IdEntidadOrderByFechaSolicitudDesc(idEntidad);
+                .findByMascota_Entidad_IdEntidadOrderByFechaSolicitudDesc(idEntidad)
+                .stream()
+                .map(this::convertirADTO)
+                .collect(Collectors.toList());
     }
 
     public List<SolicitudDTO> filtrarSolicitudesPorMascota(Long idMascota, String codigo, String estado) {
@@ -299,7 +302,7 @@ public class SolicitudServicio {
                 .orElse(null);
     }
 
-    public List<Solicitud> filtrarSolicitudesPorEntidad(
+    public List<SolicitudDTO> filtrarSolicitudesPorEntidad(
             Long idEntidad,
             String codigo,
             String estado,
@@ -327,15 +330,18 @@ public class SolicitudServicio {
         }
 
         return solicitudRepositorio.filtrarSolicitudesPorEntidad(
-                idEntidad,
-                codigoFiltro,
-                estadoFiltro,
-                especieFiltro
-        );
+                        idEntidad,
+                        codigoFiltro,
+                        estadoFiltro,
+                        especieFiltro
+                )
+                .stream()
+                .map(this::convertirADTO)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public Solicitud rechazarSolicitud(Long idSolicitud) {
+    public SolicitudDTO rechazarSolicitud(Long idSolicitud) {
 
         if (idSolicitud == null) {
             return null;
@@ -380,11 +386,11 @@ public class SolicitudServicio {
             notificacionServicio.insertar(notificacion);
         }
 
-        return solicitudActualizada;
+        return convertirADTO(solicitudActualizada);
     }
 
     @Transactional
-    public Solicitud aprobarSolicitud(Long idSolicitud) {
+    public SolicitudDTO aprobarSolicitud(Long idSolicitud) {
 
         if (idSolicitud == null) {
             return null;
@@ -479,7 +485,7 @@ public class SolicitudServicio {
             notificacionServicio.insertar(notificacion);
         }
 
-        return solicitudAprobada;
+        return convertirADTO(solicitudAprobada);
     }
 
     private SolicitudDTO convertirADTO(Solicitud solicitud) {

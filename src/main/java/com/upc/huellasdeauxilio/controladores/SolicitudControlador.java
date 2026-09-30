@@ -1,7 +1,6 @@
 package com.upc.huellasdeauxilio.controladores;
 
 import com.upc.huellasdeauxilio.dtos.SolicitudDTO;
-import com.upc.huellasdeauxilio.entidades.Solicitud;
 import com.upc.huellasdeauxilio.servicios.SolicitudServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -61,7 +60,7 @@ public class SolicitudControlador {
         );
     }
     @GetMapping("/solicitudes/entidad/{idEntidad}")
-    public List<Solicitud> listarPorEntidad(@PathVariable Long idEntidad) {
+    public List<SolicitudDTO> listarPorEntidad(@PathVariable Long idEntidad) {
         return solicitudServicio.listarPorEntidad(idEntidad);
     }
 
@@ -79,7 +78,7 @@ public class SolicitudControlador {
     }
 
     @GetMapping("/solicitudes/entidad/{idEntidad}/filtrar/{codigo}/{estado}/{especie}")
-    public List<Solicitud> filtrarSolicitudesPorEntidad(
+    public List<SolicitudDTO> filtrarSolicitudesPorEntidad(
             @PathVariable Long idEntidad,
             @PathVariable String codigo,
             @PathVariable String estado,
@@ -94,12 +93,12 @@ public class SolicitudControlador {
     }
 
     @PutMapping("/solicitud/{idSolicitud}/rechazar")
-    public Solicitud rechazarSolicitud(@PathVariable Long idSolicitud) {
+    public SolicitudDTO rechazarSolicitud(@PathVariable Long idSolicitud) {
         return solicitudServicio.rechazarSolicitud(idSolicitud);
     }
 
     @PutMapping("/solicitud/{idSolicitud}/aprobar")
-    public Solicitud aprobarSolicitud(@PathVariable Long idSolicitud) {
+    public SolicitudDTO aprobarSolicitud(@PathVariable Long idSolicitud) {
         return solicitudServicio.aprobarSolicitud(idSolicitud);
     }
 }
