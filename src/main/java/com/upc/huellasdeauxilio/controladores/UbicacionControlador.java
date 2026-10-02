@@ -6,6 +6,7 @@ import com.upc.huellasdeauxilio.servicios.UbicacionServicio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/api")
@@ -18,6 +19,7 @@ public class UbicacionControlador {
     private ModelMapper modelMapper;
 
     @PostMapping("/ubicacion")
+    @PreAuthorize("hasRole('CIUDADANO')")
     public UbicacionDTO insertar(
             @RequestBody UbicacionDTO ubicacionDTO) {
 

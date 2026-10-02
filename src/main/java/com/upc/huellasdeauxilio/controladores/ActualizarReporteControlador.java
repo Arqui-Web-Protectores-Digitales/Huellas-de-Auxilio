@@ -6,6 +6,7 @@ import com.upc.huellasdeauxilio.servicios.ActualizarReporteServicio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +22,7 @@ public class ActualizarReporteControlador {
     private ModelMapper modelMapper;
 
     @PostMapping("/actualizarreporte")
+    @PreAuthorize("hasRole('ENTIDAD')")
     public ActualizarReporteDTO insertar(@RequestBody ActualizarReporteDTO dto) {
         ActualizarReporte actualizarReporte = modelMapper.map(dto, ActualizarReporte.class);
         actualizarReporte = actualizarReporteServicio.insertar(actualizarReporte);
@@ -28,6 +30,7 @@ public class ActualizarReporteControlador {
     }
 
     @GetMapping("/actualizarreporte/reporte/{idReporte}")
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'ENTIDAD')")
     public List<ActualizarReporteDTO> listarPorReporte(@PathVariable Long idReporte) {
         List<ActualizarReporte> historial = actualizarReporteServicio.listarPorReporte(idReporte);
         return historial.stream()

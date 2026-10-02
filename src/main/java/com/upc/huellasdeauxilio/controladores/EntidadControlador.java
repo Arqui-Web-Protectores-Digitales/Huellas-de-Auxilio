@@ -7,6 +7,7 @@ import com.upc.huellasdeauxilio.servicios.EntidadServicio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -78,6 +79,7 @@ public class EntidadControlador {
     }
 
     @GetMapping("/entidad/usuario/{idUsuario}")
+    @PreAuthorize("hasRole('ENTIDAD')")
     public EntidadDTO buscarPorUsuario(
             @PathVariable Long idUsuario) {
 
@@ -90,6 +92,7 @@ public class EntidadControlador {
     }
 
     @GetMapping("/entidades/zona/{zonaAtencion}")
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'ENTIDAD')")
     public List<EntidadDTO> buscarPorZonaAtencion(
             @PathVariable String zonaAtencion) {
 
@@ -104,6 +107,7 @@ public class EntidadControlador {
     }
 
     @GetMapping("/entidades")
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'ENTIDAD')")
     public List<EntidadDTO> listarTodas() {
 
         List<Entidad> entidades =
@@ -115,6 +119,7 @@ public class EntidadControlador {
     }
 
     @GetMapping("/entidad/detalle/{idEntidad}")
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'ENTIDAD')")
     public EntidadDTO buscarPorId(
             @PathVariable Long idEntidad) {
 
@@ -127,6 +132,7 @@ public class EntidadControlador {
     }
 
     @GetMapping("/entidades/nombre/{nombre}")
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'ENTIDAD')")
     public List<EntidadDTO> buscarPorNombre(
             @PathVariable String nombre) {
 
@@ -141,6 +147,7 @@ public class EntidadControlador {
     }
 
     @PutMapping("/entidades/{Id}")
+    @PreAuthorize("hasRole('ENTIDAD')")
     public EntidadDTO modificarEntidad(
             @PathVariable Long Id,
             @RequestBody EntidadDTO entidadDTO) {
@@ -165,6 +172,7 @@ public class EntidadControlador {
     }
 
     @PutMapping("/entidades/{Id}/contraseñanueva")
+    @PreAuthorize("hasRole('ENTIDAD')")
     public void modificarContraseñaEntidad(
             @PathVariable Long Id,
             @RequestBody String contraseñanueva) {
@@ -176,6 +184,7 @@ public class EntidadControlador {
     }
 
     @GetMapping("/entidades/{Id}")
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'ENTIDAD')")
     public EntidadDTO buscarEntidadPorId(
             @PathVariable Long Id) {
 
