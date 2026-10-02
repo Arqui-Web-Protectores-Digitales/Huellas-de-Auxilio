@@ -1,0 +1,39 @@
+services:
+  app:
+    image: 'huellas-backend:latest'
+    build:
+      context: .
+    container_name: app
+    ports:
+      - "6868:8080"
+    networks:
+      - my-network-name
+    depends_on:
+      - db
+    environment:
+      # Estos valores sobreescriben tu application.properties cuando corra en Docker
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgre
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/db_GuardianesDigitales
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgre
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+  db:
+    image: postgres:16-alpine
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    restart: always
+    container_name: db
+    networks:
+      - my-network-name
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgre
+      - POSTGRES_DB=db_GuardianesDigitales
+    ports:
+      - "5433:5432"
+volumes:
+  db_data:
+networks:
+  my-network-name:
+    name: springcloud
