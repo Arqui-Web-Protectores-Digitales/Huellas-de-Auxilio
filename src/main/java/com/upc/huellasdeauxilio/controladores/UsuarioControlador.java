@@ -82,20 +82,6 @@ public class UsuarioControlador {
         return convertirADTO(usuario);
     }
 
-    // HU03
-    @PostMapping("/usuario/login")
-    public UsuarioDTO iniciarSesion(
-            @RequestBody UsuarioDTO usuarioDTO) {
-
-        Usuario usuario =
-                usuarioServicio.iniciarSesion(
-                        usuarioDTO.getCorreo(),
-                        usuarioDTO.getContraseña()
-                );
-
-        return convertirADTO(usuario);
-    }
-
     // HU04
     @PutMapping("/usuario/contrasena/{correo}")
     @PreAuthorize("hasAnyRole('CIUDADANO', 'ENTIDAD')")
