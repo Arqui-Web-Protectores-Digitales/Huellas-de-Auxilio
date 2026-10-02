@@ -5,6 +5,7 @@ import com.upc.huellasdeauxilio.entidades.Usuario;
 import com.upc.huellasdeauxilio.repositorios.RolRepositorio;
 import com.upc.huellasdeauxilio.repositorios.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,6 +16,10 @@ public class UsuarioServicio {
 
     @Autowired
     private RolRepositorio rolRepositorio;
+
+    // INYECTAMOS EL ENCRIPTADOR DE CONTRASEÑAS
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public Usuario insertar(Usuario usuario) {
 
@@ -35,18 +40,15 @@ public class UsuarioServicio {
         usuario.setRol(rol);
         usuario.setEstadoUsuario(true);
 
+        // ¡MAGIA DE SEGURIDAD! Encriptamos la clave antes de guardarla en la base de datos
+        String bcryptPassword = passwordEncoder.encode(usuario.getContraseña());
+        usuario.setContraseña(bcryptPassword);
+
         return usuarioRepositorio.save(usuario);
     }
 
     public Usuario buscarPorCorreo(String correo) {
         return usuarioRepositorio.findByCorreo(correo);
-    }
-
-    public Usuario iniciarSesion(String correo, String contraseña) {
-        return usuarioRepositorio.findByCorreoAndContraseña(
-                correo,
-                contraseña
-        );
     }
 
     public Usuario cambiarContrasena(
@@ -57,7 +59,8 @@ public class UsuarioServicio {
                 usuarioRepositorio.findByCorreo(correo);
 
         if (usuario != null) {
-            usuario.setContraseña(nuevaContrasena);
+            // Encriptamos la nueva contraseña antes de actualizar
+            usuario.setContraseña(passwordEncoder.encode(nuevaContrasena));
             return usuarioRepositorio.save(usuario);
         }
 
@@ -73,9 +76,10 @@ public class UsuarioServicio {
         Usuario usuario =
                 usuarioRepositorio.findById(id).orElse(null);
 
+        // Aquí usamos matches() porque la clave en la BD está encriptada y la que manda el usuario no
         if (usuario != null &&
                 usuario.getCorreo().equals(correo) &&
-                usuario.getContraseña().equals(contraseña)) {
+                passwordEncoder.matches(contraseña, usuario.getContraseña())) {
 
             usuario.setEstadoUsuario(false);
 
@@ -107,7 +111,8 @@ public class UsuarioServicio {
             return null;
         }
 
-        if (!usuario.getContraseña().equals(contrasenaActual)) {
+        // Verificamos con el encriptador si la clave actual es correcta
+        if (!passwordEncoder.matches(contrasenaActual, usuario.getContraseña())) {
             return null;
         }
 

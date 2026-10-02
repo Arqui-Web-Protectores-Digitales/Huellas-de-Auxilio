@@ -6,6 +6,7 @@ import com.upc.huellasdeauxilio.servicios.NotificacionServicio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +29,7 @@ public class NotificacionControlador {
     }
 
     @GetMapping("/notificaciones/usuario/{idUsuario}")
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'ENTIDAD')")
     public List<NotificacionDTO> listarPorUsuario(@PathVariable Long idUsuario) {
         List<Notificacion> notificaciones = notificacionServicio.listarPorUsuario(idUsuario);
         return notificaciones.stream()
@@ -36,6 +38,7 @@ public class NotificacionControlador {
     }
 
     @PutMapping("/notificacion/leer/{idNotificacion}")
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'ENTIDAD')")
     public NotificacionDTO marcarComoLeida(@PathVariable Long idNotificacion) {
         Notificacion notificacion = notificacionServicio.marcarComoLeida(idNotificacion);
         return (notificacion != null) ? modelMapper.map(notificacion, NotificacionDTO.class) : null;

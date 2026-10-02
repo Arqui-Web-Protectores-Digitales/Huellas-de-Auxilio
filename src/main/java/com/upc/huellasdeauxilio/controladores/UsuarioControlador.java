@@ -7,6 +7,7 @@ import com.upc.huellasdeauxilio.servicios.UsuarioServicio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Map;
 
@@ -71,6 +72,7 @@ public class UsuarioControlador {
 
     // HU01 / HU02 / HU04
     @GetMapping("/usuario/correo/{correo}")
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'ENTIDAD')")
     public UsuarioDTO buscarPorCorreo(
             @PathVariable String correo) {
 
@@ -80,22 +82,9 @@ public class UsuarioControlador {
         return convertirADTO(usuario);
     }
 
-    // HU03
-    @PostMapping("/usuario/login")
-    public UsuarioDTO iniciarSesion(
-            @RequestBody UsuarioDTO usuarioDTO) {
-
-        Usuario usuario =
-                usuarioServicio.iniciarSesion(
-                        usuarioDTO.getCorreo(),
-                        usuarioDTO.getContraseña()
-                );
-
-        return convertirADTO(usuario);
-    }
-
     // HU04
     @PutMapping("/usuario/contrasena/{correo}")
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'ENTIDAD')")
     public UsuarioDTO cambiarContrasena(
             @PathVariable String correo,
             @RequestBody UsuarioDTO usuarioDTO) {
@@ -111,6 +100,7 @@ public class UsuarioControlador {
 
     // HU22 - ya existía en el proyecto
     @PutMapping("/usuario/usuario/{id}")
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'ENTIDAD')")
     public UsuarioDTO eliminadoLogico(
             @RequestBody UsuarioDTO usuarioDTO,
             @PathVariable Long id) {
@@ -127,6 +117,7 @@ public class UsuarioControlador {
 
     // HU21 / HU24 - ya existía
     @PutMapping("/usuario/perfil/contrasena/{correo}")
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'ENTIDAD')")
     public String cambiarContrasenaDesdePerfil(
             @PathVariable String correo,
             @RequestBody Map<String, String> datos) {

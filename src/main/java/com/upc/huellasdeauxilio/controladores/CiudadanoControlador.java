@@ -7,6 +7,7 @@ import com.upc.huellasdeauxilio.servicios.CiudadanoServicio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/api")
@@ -24,12 +25,12 @@ public class CiudadanoControlador {
         Ciudadano ciudadano =
                 modelMapper.map(dto, Ciudadano.class);
 
-        if (dto.getUsuarioIdUsuario() != null) {
+        if (dto.getIdUsuario() != null) {
 
             Usuario usuario = new Usuario();
 
             usuario.setIdUsuario(
-                    dto.getUsuarioIdUsuario()
+                    dto.getIdUsuario()
             );
 
             ciudadano.setUsuario(usuario);
@@ -53,7 +54,7 @@ public class CiudadanoControlador {
 
         if (ciudadano.getUsuario() != null) {
 
-            dto.setUsuarioIdUsuario(
+            dto.setIdUsuario(
                     ciudadano
                             .getUsuario()
                             .getIdUsuario()
@@ -79,6 +80,7 @@ public class CiudadanoControlador {
 
     // HU01
     @GetMapping("/ciudadano/dni/{dni}")
+    @PreAuthorize("hasRole('CIUDADANO')")
     public CiudadanoDTO buscarPorDni(
             @PathVariable String dni) {
 
@@ -88,6 +90,7 @@ public class CiudadanoControlador {
     }
 
     @GetMapping("/ciudadano/usuario/{idUsuario}")
+    @PreAuthorize("hasRole('CIUDADANO')")
     public CiudadanoDTO buscarPorUsuario(
             @PathVariable Long idUsuario) {
 
@@ -99,6 +102,7 @@ public class CiudadanoControlador {
     }
 
     @GetMapping("/ciudadano/perfil/{idCiudadano}")
+    @PreAuthorize("hasRole('CIUDADANO')")
     public CiudadanoDTO obtenerPerfil(
             @PathVariable Long idCiudadano) {
 
@@ -110,6 +114,7 @@ public class CiudadanoControlador {
     }
 
     @PutMapping("/ciudadano/perfil/{idCiudadano}")
+    @PreAuthorize("hasRole('CIUDADANO')")
     public String actualizarPerfil(
             @PathVariable Long idCiudadano,
             @RequestBody CiudadanoDTO ciudadanoDTO) {
