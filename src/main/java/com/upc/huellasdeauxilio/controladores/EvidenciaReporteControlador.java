@@ -6,6 +6,7 @@ import com.upc.huellasdeauxilio.servicios.EvidenciaReporteServicio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +22,7 @@ public class EvidenciaReporteControlador {
     private ModelMapper modelMapper;
 
     @PostMapping("/evidenciareporte")
+    @PreAuthorize("hasRole('CIUDADANO')")
     public EvidenciaReporteDTO insertar(@RequestBody EvidenciaReporteDTO evidenciaDTO) {
         EvidenciaReporte evidencia = modelMapper.map(evidenciaDTO, EvidenciaReporte.class);
 
@@ -30,6 +32,7 @@ public class EvidenciaReporteControlador {
     }
 
     @GetMapping("/evidenciareporte/reporte/{idReporte}")
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'ENTIDAD')")
     public List<EvidenciaReporteDTO> buscarPorReporte(@PathVariable Long idReporte) {
         List<EvidenciaReporte> evidencias = evidenciaReporteServicio.buscarPorReporte(idReporte);
 
@@ -39,6 +42,7 @@ public class EvidenciaReporteControlador {
     }
 
     @DeleteMapping("/evidenciareporte/{idEvidencia}")
+    @PreAuthorize("hasRole('CIUDADANO')")
     public void eliminar(@PathVariable Long idEvidencia) {
         evidenciaReporteServicio.eliminar(idEvidencia);
     }

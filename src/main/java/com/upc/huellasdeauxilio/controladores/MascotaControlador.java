@@ -1,11 +1,10 @@
 package com.upc.huellasdeauxilio.controladores;
 
-
 import com.upc.huellasdeauxilio.dtos.MascotaDTO;
-import com.upc.huellasdeauxilio.entidades.Mascota;
 import com.upc.huellasdeauxilio.servicios.MascotaServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
@@ -17,12 +16,14 @@ public class MascotaControlador {
     private MascotaServicio mascotaServicio;
 
     @GetMapping("/mascotas")
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'ENTIDAD')")
     public List<MascotaDTO> listarMascotasDisponibles()
     {
         return mascotaServicio.listarDisponibles();
     }
 
     @GetMapping("/mascota/{idMascota}")
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'ENTIDAD')")
     public MascotaDTO buscarPorId(
             @PathVariable("idMascota") Long idMascota
     ) {
@@ -30,26 +31,32 @@ public class MascotaControlador {
     }
 
     @GetMapping("/mascotas/filtrar/{nombre}/{especie}/{edad}/{distrito}")
-    public List<Mascota> filtrarMascotas(@PathVariable String nombre,
-                                         @PathVariable String especie,
-                                         @PathVariable String edad,
-                                         @PathVariable String distrito)
-    {
-        return mascotaServicio.filtrarMascotas(nombre, especie, edad, distrito);
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'ENTIDAD')")
+    public List<MascotaDTO> filtrarMascotas(@PathVariable String nombre,
+                                            @PathVariable String especie,
+                                            @PathVariable String edad,
+                                            @PathVariable String distrito) {
+        return mascotaServicio.filtrarMascotas(
+                nombre,
+                especie,
+                edad,
+                distrito
+        );
     }
-    //para limpiar los filtros se vuelve a consultar /api/mascotas
 
     @GetMapping("/mascotas/entidad/{idEntidad}")
-    public List<Mascota> listarMascotasPorEntidad(@PathVariable Long idEntidad)
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'ENTIDAD')")
+    public List<MascotaDTO> listarMascotasPorEntidad(@PathVariable Long idEntidad)
     {
         return mascotaServicio.listarDisponiblesPorEntidad(idEntidad);
     }
 
     @GetMapping("/mascotas/entidad/{idEntidad}/filtrar/{busqueda}/{especie}/{edad}")
-    public List<Mascota> filtrarMascotasPorEntidad(@PathVariable Long idEntidad,
-                                                   @PathVariable String busqueda,
-                                                   @PathVariable String especie,
-                                                   @PathVariable String edad)
+    @PreAuthorize("hasAnyRole('CIUDADANO', 'ENTIDAD')")
+    public List<MascotaDTO> filtrarMascotasPorEntidad(@PathVariable Long idEntidad,
+                                                      @PathVariable String busqueda,
+                                                      @PathVariable String especie,
+                                                      @PathVariable String edad)
     {
         return mascotaServicio.filtrarMascotasPorEntidad(
                 idEntidad,
@@ -60,16 +67,17 @@ public class MascotaControlador {
     }
 
     @PostMapping("/mascotas/entidad/{idEntidad}")
-    public Mascota publicarMascota(@PathVariable Long idEntidad,
-                                   @RequestBody Mascota mascota)
+    @PreAuthorize("hasRole('ENTIDAD')")
+    public MascotaDTO publicarMascota(@PathVariable Long idEntidad,
+                                      @RequestBody MascotaDTO mascotaDTO)
     {
-        return mascotaServicio.publicarMascota(idEntidad, mascota);
+        return mascotaServicio.publicarMascota(idEntidad, mascotaDTO);
     }
 
     @PutMapping("/mascota/{idMascota}")
-    public Mascota editarMascota(@PathVariable Long idMascota,
-                                 @RequestBody Mascota mascota) {
-        return mascotaServicio.editarMascota(idMascota, mascota);
+    @PreAuthorize("hasRole('ENTIDAD')")
+    public MascotaDTO editarMascota(@PathVariable Long idMascota,
+                                    @RequestBody MascotaDTO mascotaDTO) {
+        return mascotaServicio.editarMascota(idMascota, mascotaDTO);
     }
-
 }

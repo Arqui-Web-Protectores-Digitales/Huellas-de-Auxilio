@@ -64,50 +64,104 @@ public class MascotaServicio {
         return valor.trim().toLowerCase(Locale.ROOT);
     }
 
-    public List<Mascota> filtrarMascotas(String nombre, String especie, String edad, String distrito)
-    {
+    public List<MascotaDTO> filtrarMascotas(String nombre, String especie,
+                                            String edad, String distrito) {
+
         return mascotaRepositorio.filtrarMascotas(
-                normalizarFiltro(nombre),
-                normalizarFiltro(especie),
-                normalizarFiltro(edad),
-                normalizarFiltro(distrito));
+                        normalizarFiltro(nombre),
+                        normalizarFiltro(especie),
+                        normalizarFiltro(edad),
+                        normalizarFiltro(distrito)
+                )
+                .stream()
+                .map(mascota -> {
+
+                    MascotaDTO dto = modelMapper.map(
+                            mascota,
+                            MascotaDTO.class
+                    );
+
+                    if (mascota.getEntidad() != null) {
+                        dto.setEntidadIdEntidad(
+                                mascota.getEntidad().getIdEntidad()
+                        );
+                    }
+
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 
-    public List<Mascota> listarDisponiblesPorEntidad(Long idEntidad) {
-        return mascotaRepositorio.findByEntidadIdEntidadAndEstadoTrue(idEntidad);
+    public List<MascotaDTO> listarDisponiblesPorEntidad(Long idEntidad) {
+
+        return mascotaRepositorio
+                .findByEntidadIdEntidadAndEstadoTrue(idEntidad)
+                .stream()
+                .map(mascota -> {
+
+                    MascotaDTO dto = modelMapper.map(
+                            mascota,
+                            MascotaDTO.class
+                    );
+
+                    dto.setEntidadIdEntidad(
+                            mascota.getEntidad().getIdEntidad()
+                    );
+
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 
-    public List<Mascota> filtrarMascotasPorEntidad(Long idEntidad,
-                                                   String busqueda,
-                                                   String especie,
-                                                   String edad) {
+    public List<MascotaDTO> filtrarMascotasPorEntidad(Long idEntidad,
+                                                      String busqueda,
+                                                      String especie,
+                                                      String edad) {
+
         return mascotaRepositorio.filtrarMascotasPorEntidad(
-                idEntidad,
-                normalizarFiltro(busqueda),
-                normalizarFiltro(especie),
-                normalizarFiltro(edad)
-        );
+                        idEntidad,
+                        normalizarFiltro(busqueda),
+                        normalizarFiltro(especie),
+                        normalizarFiltro(edad)
+                )
+                .stream()
+                .map(mascota -> {
 
+                    MascotaDTO dto = modelMapper.map(
+                            mascota,
+                            MascotaDTO.class
+                    );
+
+                    dto.setEntidadIdEntidad(
+                            mascota.getEntidad().getIdEntidad()
+                    );
+
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
-    public Mascota publicarMascota(Long idEntidad, Mascota mascota) {
 
-        if (mascota == null
-                || mascota.getNombre() == null
-                || mascota.getNombre().isBlank()
-                || mascota.getEspecie() == null
-                || mascota.getEspecie().isBlank()
-                || mascota.getEdad() == null
-                || mascota.getEdad().isBlank()
-                || mascota.getSexo() == null
-                || mascota.getSexo().isBlank()
-                || mascota.getDistrito() == null
-                || mascota.getDistrito().isBlank()
-                || mascota.getTamaño() == null
-                || mascota.getTamaño().isBlank()
-                || mascota.getDescripcion() == null
-                || mascota.getDescripcion().isBlank()
-                || mascota.getUrlFoto() == null
-                || mascota.getUrlFoto().isBlank()) {
+    public MascotaDTO publicarMascota(Long idEntidad, MascotaDTO mascotaDTO) {
+
+        if (idEntidad == null
+                || mascotaDTO == null
+                || mascotaDTO.getNombre() == null
+                || mascotaDTO.getNombre().isBlank()
+                || mascotaDTO.getEspecie() == null
+                || mascotaDTO.getEspecie().isBlank()
+                || mascotaDTO.getEdad() == null
+                || mascotaDTO.getEdad().isBlank()
+                || mascotaDTO.getSexo() == null
+                || mascotaDTO.getSexo().isBlank()
+                || mascotaDTO.getDistrito() == null
+                || mascotaDTO.getDistrito().isBlank()
+                || mascotaDTO.getTamaño() == null
+                || mascotaDTO.getTamaño().isBlank()
+                || mascotaDTO.getDescripcion() == null
+                || mascotaDTO.getDescripcion().isBlank()
+                || mascotaDTO.getUrlFoto() == null
+                || mascotaDTO.getUrlFoto().isBlank()) {
+
             return null;
         }
 
@@ -117,13 +171,29 @@ public class MascotaServicio {
             return null;
         }
 
+        // Convertir DTO a entidad
+        Mascota mascota = modelMapper.map(mascotaDTO, Mascota.class);
+
+        // Estos datos los establece el backend, no el cliente
+        mascota.setIdMascota(null);
         mascota.setEntidad(entidad);
         mascota.setEstado(true);
 
-        return mascotaRepositorio.save(mascota);
+        // Guardar en la base de datos
+        Mascota mascotaGuardada = mascotaRepositorio.save(mascota);
+
+        // Convertir la entidad guardada a DTO
+        MascotaDTO respuesta = modelMapper.map(
+                mascotaGuardada,
+                MascotaDTO.class
+        );
+
+        respuesta.setEntidadIdEntidad(entidad.getIdEntidad());
+
+        return respuesta;
     }
 
-    public Mascota editarMascota(Long idMascota, Mascota datosMascota) {
+    public MascotaDTO editarMascota(Long idMascota, MascotaDTO datosMascota) {
 
         if (datosMascota == null
                 || datosMascota.getNombre() == null
@@ -142,6 +212,7 @@ public class MascotaServicio {
                 || datosMascota.getDescripcion().isBlank()
                 || datosMascota.getUrlFoto() == null
                 || datosMascota.getUrlFoto().isBlank()) {
+
             return null;
         }
 
@@ -157,6 +228,7 @@ public class MascotaServicio {
             return null;
         }
 
+        // Actualizar únicamente los atributos editables
         mascota.setNombre(datosMascota.getNombre());
         mascota.setEspecie(datosMascota.getEspecie());
         mascota.setEdad(datosMascota.getEdad());
@@ -166,7 +238,20 @@ public class MascotaServicio {
         mascota.setDescripcion(datosMascota.getDescripcion());
         mascota.setUrlFoto(datosMascota.getUrlFoto());
 
-        return mascotaRepositorio.save(mascota);
+        // Guardar los cambios
+        Mascota mascotaActualizada = mascotaRepositorio.save(mascota);
+
+        // Convertir la entidad actualizada a DTO
+        MascotaDTO respuesta = modelMapper.map(
+                mascotaActualizada,
+                MascotaDTO.class
+        );
+
+        respuesta.setEntidadIdEntidad(
+                mascotaActualizada.getEntidad().getIdEntidad()
+        );
+
+        return respuesta;
     }
 
     public Mascota cambiarEstado(Long idMascota, Boolean estado) {
