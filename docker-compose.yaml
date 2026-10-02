@@ -4,8 +4,9 @@ services:
     build:
       context: .
     container_name: app
+    restart: always
     ports:
-      - "6868:8080"
+      - "6868:8088"
     networks:
       - my-network-name
     depends_on:
