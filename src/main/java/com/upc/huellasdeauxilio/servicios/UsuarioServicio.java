@@ -51,13 +51,6 @@ public class UsuarioServicio {
         return usuarioRepositorio.findByCorreo(correo);
     }
 
-    public Usuario iniciarSesion(String correo, String contraseña) {
-        return usuarioRepositorio.findByCorreoAndContraseña(
-                correo,
-                contraseña
-        );
-    }
-
     public Usuario cambiarContrasena(
             String correo,
             String nuevaContrasena) {
