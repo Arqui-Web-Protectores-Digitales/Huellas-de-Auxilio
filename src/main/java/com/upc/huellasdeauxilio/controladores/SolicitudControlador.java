@@ -50,13 +50,13 @@ public class SolicitudControlador {
     }
 
     @GetMapping("/solicitudes/mascota/{idMascota}")
-    @PreAuthorize("hasAnyRole('CIUDADANO', 'ENTIDAD')")
+    @PreAuthorize("hasRole('ENTIDAD')")
     public List<SolicitudDTO> listarPorMascota(@PathVariable Long idMascota) {
         return solicitudServicio.listarPorMascota(idMascota);
     }
 
     @GetMapping("/solicitud/mascota/{idMascota}/{idSolicitud}")
-    @PreAuthorize("hasAnyRole('CIUDADANO', 'ENTIDAD')")
+    @PreAuthorize("hasRole('ENTIDAD')")
     public SolicitudDTO buscarPorSolicitudYMascota(
             @PathVariable Long idMascota,
             @PathVariable Long idSolicitud
@@ -73,7 +73,7 @@ public class SolicitudControlador {
     }
 
     @GetMapping("/solicitudes/mascota/{idMascota}/filtrar/{codigo}/{estado}")
-    @PreAuthorize("hasAnyRole('CIUDADANO', 'ENTIDAD')")
+    @PreAuthorize("hasRole('ENTIDAD')")
     public List<SolicitudDTO> filtrarSolicitudesPorMascota(
             @PathVariable Long idMascota,
             @PathVariable String codigo,
