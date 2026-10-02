@@ -6,6 +6,7 @@ import com.upc.huellasdeauxilio.servicios.ReporteServicio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ public class ReporteControlador {
     private ModelMapper modelMapper;
 
     @PostMapping("/reporte")
+    @PreAuthorize("hasRole('CIUDADANO')")
     public ReporteDTO insertar(@RequestBody ReporteDTO reporteDTO) {
         Reporte reporte = modelMapper.map(reporteDTO, Reporte.class);
         reporte = reporteServicio.insertar(reporte);
@@ -29,6 +31,7 @@ public class ReporteControlador {
     }
 
     @PutMapping("/reporte/estado/{idReporte}")
+    @PreAuthorize("hasRole('ENTIDAD')")
     public ReporteDTO actualizarEstado(@PathVariable Long idReporte,
                                        @RequestBody ReporteDTO reporteDTO) {
         Reporte reporteActualizado = reporteServicio.actualizarEstado(idReporte, reporteDTO.getEstado());
@@ -36,6 +39,7 @@ public class ReporteControlador {
     }
 
     @GetMapping("/reportes/ciudadano/{idCiudadano}")
+    @PreAuthorize("hasRole('CIUDADANO')")
     public List<ReporteDTO> listarPorCiudadano(@PathVariable Long idCiudadano) {
         return reporteServicio.listarPorCiudadano(idCiudadano).stream()
                 .map(r -> modelMapper.map(r, ReporteDTO.class))
@@ -66,6 +70,7 @@ public class ReporteControlador {
     }
 
     @GetMapping("/reportes/entidad/{idEntidad}")
+    @PreAuthorize("hasRole('ENTIDAD')")
     public List<ReporteDTO> listarPorEntidad(@PathVariable Long idEntidad) {
         return reporteServicio.listarPorEntidad(idEntidad).stream()
                 .map(r -> modelMapper.map(r, ReporteDTO.class))
@@ -90,6 +95,7 @@ public class ReporteControlador {
     }
 
     @GetMapping("/reportes_1/{Id}")
+    @PreAuthorize("hasRole('ENTIDAD')")
     public ReporteDTO buscarPorId(@PathVariable Long Id){
         Reporte reporte = reporteServicio.buscarPorId(Id);
         return (reporte != null) ? modelMapper.map(reporte, ReporteDTO.class) : null;
