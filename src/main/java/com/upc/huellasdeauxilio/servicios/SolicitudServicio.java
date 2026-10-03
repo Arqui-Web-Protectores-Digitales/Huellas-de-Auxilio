@@ -70,13 +70,13 @@ public class SolicitudServicio {
             return null;
         }
 
-        // Convertir DTO a entidad.
+        // Convertir DTO a entidad
         Solicitud solicitud = modelMapper.map(
                 solicitudDTO,
                 Solicitud.class
         );
 
-        // No aceptar estos valores desde el cliente.
+        // No aceptar estos valores desde el cliente
         solicitud.setIdSolicitud(null);
         solicitud.setCiudadano(ciudadano);
         solicitud.setMascota(mascota);
@@ -106,7 +106,7 @@ public class SolicitudServicio {
 
         notificacionServicio.insertar(notiCiudadano);
 
-        // Convertir la entidad guardada a DTO.
+        // Convertir la entidad guardada a DTO
         SolicitudDTO respuesta = modelMapper.map(
                 solicitudGuardada,
                 SolicitudDTO.class

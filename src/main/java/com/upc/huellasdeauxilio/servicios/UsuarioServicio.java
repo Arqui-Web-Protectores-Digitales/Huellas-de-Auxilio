@@ -17,7 +17,6 @@ public class UsuarioServicio {
     @Autowired
     private RolRepositorio rolRepositorio;
 
-    // INYECTAMOS EL ENCRIPTADOR DE CONTRASEÑAS
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -40,7 +39,6 @@ public class UsuarioServicio {
         usuario.setRol(rol);
         usuario.setEstadoUsuario(true);
 
-        // ¡MAGIA DE SEGURIDAD! Encriptamos la clave antes de guardarla en la base de datos
         String bcryptPassword = passwordEncoder.encode(usuario.getContraseña());
         usuario.setContraseña(bcryptPassword);
 
@@ -59,7 +57,6 @@ public class UsuarioServicio {
                 usuarioRepositorio.findByCorreo(correo);
 
         if (usuario != null) {
-            // Encriptamos la nueva contraseña antes de actualizar
             usuario.setContraseña(passwordEncoder.encode(nuevaContrasena));
             return usuarioRepositorio.save(usuario);
         }
@@ -67,7 +64,6 @@ public class UsuarioServicio {
         return null;
     }
 
-    // ELIMINADO LOGICO DE USUARIO
     public Usuario eliminadoLogico(
             String correo,
             String contraseña,
@@ -76,7 +72,6 @@ public class UsuarioServicio {
         Usuario usuario =
                 usuarioRepositorio.findById(id).orElse(null);
 
-        // Aquí usamos matches() porque la clave en la BD está encriptada y la que manda el usuario no
         if (usuario != null &&
                 usuario.getCorreo().equals(correo) &&
                 passwordEncoder.matches(contraseña, usuario.getContraseña())) {
@@ -111,7 +106,6 @@ public class UsuarioServicio {
             return null;
         }
 
-        // Verificamos con el encriptador si la clave actual es correcta
         if (!passwordEncoder.matches(contrasenaActual, usuario.getContraseña())) {
             return null;
         }

@@ -42,7 +42,7 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    // Usaremos BCrypt para encriptar las contraseñas
+    // aquí es BCrypt para encriptar las contraseñas
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -54,9 +54,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // ENDPOINTS PÚBLICOS (Sin Token)
                         .requestMatchers("/api/authenticate").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/usuario").permitAll() // Para registrarse
-                        .requestMatchers(HttpMethod.POST, "/api/ciudadano").permitAll() // Para registrarse
-                        .requestMatchers(HttpMethod.POST, "/api/entidad").permitAll() // Para registrarse
+                        .requestMatchers(HttpMethod.POST, "/api/usuario").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/ciudadano").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/entidad").permitAll()
                         // SWAGGER PÚBLICO
                         .requestMatchers(
                                 "/swagger-ui.html",
