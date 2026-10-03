@@ -30,10 +30,10 @@ INSERT INTO reporte (id_ubicacion, id_ciudadano, id_entidad, fecha_reporte, tipo
 
 --MASCOTAS EN ADOPCIÓN
 --Refugio Patitas publica
-INSERT INTO mascota (id_entidad, nombre, edad, sexo, distrito, tamaño, estado, especie, url_foto, descripcion) VALUES (1, 'Max', 'Adulto', 'Macho', 'San Miguel', 'Grande', true, 'Perro', 'https://images.dog.ceo/breeds/labrador/n02099712_7418.jpg', 'Cariñoso, jugueton y muy protector.');
-INSERT INTO mascota (id_entidad, nombre, edad, sexo, distrito, tamaño, estado, especie, url_foto, descripcion) VALUES (1, 'Luna', 'Cachorro', 'Hembra', 'San Miguel', 'Pequeño', true, 'Gato', 'https://cdn2.thecatapi.com/images/MTY3ODIyMQ.jpg', 'Muy tranquila, ideal para departamentos.');
+INSERT INTO mascota (id_entidad, nombre, edad, sexo, distrito, tamaño, estado, especie, url_foto, descripcion) VALUES (1, 'Max', 'Adulto', 'Macho', 'San Miguel', 'Grande', true, 'Perro', 'images/n02099712_7418.jpg', 'Cariñoso, jugueton y muy protector.');
+INSERT INTO mascota (id_entidad, nombre, edad, sexo, distrito, tamaño, estado, especie, url_foto, descripcion) VALUES (1, 'Luna', 'Cachorro', 'Hembra', 'San Miguel', 'Pequeño', true, 'Gato', 'images/MTY3ODIyMQ.jpg', 'Muy tranquila, ideal para departamentos.');
 --Veterinaria Central publica
-INSERT INTO mascota (id_entidad, nombre, edad, sexo, distrito, tamaño, estado, especie, url_foto, descripcion) VALUES (2, 'Rocky', 'Joven', 'Macho', 'Miraflores', 'Mediano', true, 'Perro', 'https://images.dog.ceo/breeds/beagle/n02088364_12124.jpg', 'Lleno de energia, necesita espacio para correr.');
+INSERT INTO mascota (id_entidad, nombre, edad, sexo, distrito, tamaño, estado, especie, url_foto, descripcion) VALUES (2, 'Rocky', 'Joven', 'Macho', 'Miraflores', 'Mediano', true, 'Perro', 'images/n02088364_12124.jpg', 'Lleno de energia, necesita espacio para correr.');
 
 --SOLICITUDES DE ADOPCIÓN
 --Juan quiere adoptar a Luna (En revisión)
