@@ -22,6 +22,6 @@ public class Ciudadano {
     private String nombreCompleto;
 
     @ManyToOne
-    @JoinColumn(name = "id_usuario")
+    @JoinColumn(name = "id_usuario", unique = true)
     private Usuario usuario;
 }

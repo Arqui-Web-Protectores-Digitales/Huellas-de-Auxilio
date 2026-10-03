@@ -29,7 +29,7 @@ public class Entidad {
     private String diasAtencion;
 
     @ManyToOne
-    @JoinColumn(name = "id_usuario")
+    @JoinColumn(name = "id_usuario", unique = true)
     private Usuario usuario;
 
     private Float latitud;
