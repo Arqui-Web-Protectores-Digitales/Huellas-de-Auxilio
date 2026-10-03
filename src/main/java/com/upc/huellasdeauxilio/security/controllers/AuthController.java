@@ -34,22 +34,18 @@ public class AuthController {
     @PostMapping("/authenticate")
     public ResponseEntity<AuthResponseDTO> createAuthenticationToken(@RequestBody AuthRequestDTO authRequest) throws Exception {
 
-        // Autentica usando el correo y contraseña
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authRequest.getCorreo(), authRequest.getContraseña())
         );
 
-        // Si es correcto, carga los detalles y genera el Token
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getCorreo());
         final String token = jwtUtil.generateToken(userDetails);
 
-        // Extrae el rol del usuario, por ejemplo ROLE_CIUDADANO
         Set<String> roles = userDetails.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toSet());
 
-        // Prepara la respuesta para el Frontend / Swagger
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Authorization", token);
 
