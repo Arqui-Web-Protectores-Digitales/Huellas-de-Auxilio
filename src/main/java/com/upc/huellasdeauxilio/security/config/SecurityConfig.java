@@ -61,7 +61,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**"
+                                "/v3/api-docs/**",
+                                "/imagenes/**"
                         ).permitAll()
                         // TODOS LOS DEMÁS REQUIEREN TOKEN
                         .anyRequest().authenticated()
